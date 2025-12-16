@@ -1,2 +1,150 @@
-# bf_readup
-BF Readup is a Redmine plugin that tracks which issues and changes users have actually read. It provides views for unread updates, recently read, and most read issues, based on real user interaction rather than static metadata. Developed internally at Bracke Forest AB.
+# BF Readup
+
+BF Readup is a Redmine plugin that tracks **reading behavior per user and per issue** and presents this data in clear, actionable views on *My Page*.
+
+Unlike traditional “read/unread” solutions based on status flags or timestamps, BF Readup is built around **actual user interaction**:
+- when an issue is opened
+- how long it is viewed
+- which journals were actually visible
+- when the user can be proven to have seen the latest change
+
+The result is a far more accurate representation of what is genuinely *new to you*.
+
+---
+
+## Features at a glance
+
+- 📌 **Updates since you last read**
+  - Prioritized list of issues with new changes
+  - Shows number of new entries and their authors
+  - Manual and bulk “mark as read”
+  - Policy-based restrictions on what can be marked as read
+
+- 👁 **Recently read issues**
+  - When you actually last read the issue
+  - Sorted by real interaction, not metadata
+
+- ⏱ **Most read issues**
+  - Time-based statistics per user
+  - Shows where attention is actually spent
+
+- ⚙ **Advanced priority rules**
+  - Rule-based priority engine
+  - Supports roles (assigned, author, watcher, mentioned)
+  - Custom Field matchers (e.g. matching user email)
+
+- 🧠 **Debug mode**
+  - Shows raw data, decision logic, and filter results
+  - Local only via LocalStorage
+
+---
+
+## Architecture overview
+
+BF Readup consists of three main parts:
+
+### Backend (Ruby / Rails)
+- `bf_readup_visits` table for tracking read interactions
+- A QueryEngine that determines:
+  - what is new
+  - what is prioritized
+  - what is allowed to be marked as read
+- Full interaction history stored in `extra_data`
+
+### Frontend (Vanilla JavaScript)
+- Turbo-safe initialization
+- Diff-based rendering (FLIP-inspired)
+- LocalStorage caching for performance
+- Time-based columns updated dynamically
+
+### UI integration
+- My Page blocks (Updates / Recent / Most)
+- Issue view (heartbeat + journal detection)
+- Admin UI for rules and settings
+
+---
+
+## Database dependencies (IMPORTANT)
+
+⚠️ **The current codebase uses explicit PostgreSQL features.**
+
+Specifically:
+- `extra_data` is stored as **jsonb**
+- Indexing is done using **GIN indexes**
+- Certain “mark as read” operations are optimized for PostgreSQL
+
+➡️ This means the plugin is **not fully compatible with other databases** (such as MySQL) at this time.
+
+### Intended handling
+The intention is to:
+- internally detect the active database engine
+- automatically **disable PostgreSQL-specific optimizations** when unavailable
+- allow the plugin to run in a degraded but functional mode where reasonable
+
+This is **not yet implemented**, but it is an explicit design intention.
+
+---
+
+## Internationalization (Locales)
+
+At present, UI text is largely hard-coded in Swedish.
+
+🗺 Planned work includes:
+- gradually moving all strings to `config/locales`
+- enabling translation into additional languages
+- keeping Swedish as a first-class language
+
+---
+
+## Project intention and scope
+
+BF Readup is:
+- ❌ **not a commercial plugin**
+- ❌ **not a community-driven roadmap project**
+- ❌ **not designed for maximum general compatibility**
+
+It is instead:
+- ✅ an **internal tool** developed alongside a Redmine rollout
+- ✅ a practical solution to real, day-to-day needs
+- ✅ an open codebase that others are welcome to learn from
+
+I am explicit that:
+- the project evolves based on my and my company’s needs
+- users “follow along” with the project’s direction, not the other way around
+- third-party demands on roadmap or direction are not accepted
+
+💡 **Good ideas, improvements, and bug fixes are always welcome.**
+
+---
+
+## AI as a co-creator
+
+This project was developed with **ChatGPT as a co-creator**.
+
+This is:
+- openly acknowledged
+- a deliberate part of the development workflow
+- not hidden or downplayed
+
+Architecture, implementation, and decisions are always **human-reviewed and intentional**.
+
+---
+
+## License and usage
+
+No formal license has been defined yet.
+
+Until then:
+- use the code at your own risk
+- no guarantees are provided
+- no long-term support commitments are implied
+
+---
+
+## Version
+
+**bf_readup v0.0.10**
+
+The codebase is active and continues to evolve, but always with internal usefulness as the primary driver.
+
+---
