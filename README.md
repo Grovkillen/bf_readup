@@ -16,7 +16,7 @@ The result is a far more accurate representation of what is genuinely *new to yo
 
 ### Updates since you last read
 
-![Updates since last read](bf_readup/doc/bf_readup_updates.png)
+![Updates since last read](doc/bf_readup_updates.png)
 
 Shows issues with new activity since you last confirmed reading them.  
 Issues are prioritized using rule-based logic that takes roles, mentions, history, and system policies into account.
@@ -28,7 +28,7 @@ While the order is expected to remain stable, future versions may allow users to
 
 ### Recently visited issues
 
-![Recently visited issues](bf_readup/doc/bf_readup_more_recent.png)
+![Recently visited issues](doc/bf_readup_more_recent.png)
 
 The screenshot shows both the **Recently visited** and **Most read** widgets side by side.
 
@@ -39,7 +39,7 @@ They focus on interaction history and reading time rather than change analysis, 
 
 ### Most read issues
 
-![Most read issues](bf_readup/doc/bf_readup_more_recent.png)
+![Most read issues](doc/bf_readup_more_recent.png)
 
 Shows where time is actually spent, based on accumulated reading time per issue.
 
@@ -47,7 +47,7 @@ Shows where time is actually spent, based on accumulated reading time per issue.
 
 ### My Page widget selection
 
-![My Page dropdown](bf_readup/doc/bf_readup_mypage_dropdown.png)
+![My Page dropdown](doc/bf_readup_mypage_dropdown.png)
 
 BF Readup widgets integrate directly into Redmine’s *My Page* and can be freely combined with standard widgets.
 
@@ -82,7 +82,7 @@ BF Readup widgets integrate directly into Redmine’s *My Page* and can be freel
 
 ## Priority rules and filters
 
-![Priority filters](bf_readup/doc/bf_readup_updates_settings.png)
+![Priority filters](doc/bf_readup_updates_settings.png)
 
 Users can control which prioritization rules are active, while system policies may enforce mandatory rules that cannot be disabled.
 
@@ -90,7 +90,7 @@ Users can control which prioritization rules are active, while system policies m
 
 ## Administration and settings
 
-![Admin settings](bf_readup/doc/bf_readup_admin_settings.png)
+![Admin settings](doc/bf_readup_admin_settings.png)
 
 Administrators can configure:
 - heartbeat interval
