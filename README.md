@@ -12,30 +12,106 @@ The result is a far more accurate representation of what is genuinely *new to yo
 
 ---
 
+## Widgets
+
+### Updates since you last read
+
+![Updates since last read](bf_readup/doc/bf_readup_updates.png)
+
+Shows issues with new activity since you last confirmed reading them.  
+Issues are prioritized using rule-based logic that takes roles, mentions, history, and system policies into account.
+
+The column set and column order in this view are currently **hard-coded by design**.  
+While the order is expected to remain stable, future versions may allow users to hide individual columns via personal settings.
+
+---
+
+### Recently visited issues
+
+![Recently visited issues](bf_readup/doc/bf_readup_more_recent.png)
+
+The screenshot shows both the **Recently visited** and **Most read** widgets side by side.
+
+These widgets intentionally display fewer columns than the *Updates since you last read* widget.  
+They focus on interaction history and reading time rather than change analysis, and the column sets are therefore deliberately different.
+
+---
+
+### Most read issues
+
+![Most read issues](bf_readup/doc/bf_readup_more_recent.png)
+
+Shows where time is actually spent, based on accumulated reading time per issue.
+
+---
+
+### My Page widget selection
+
+![My Page dropdown](bf_readup/doc/bf_readup_mypage_dropdown.png)
+
+BF Readup widgets integrate directly into Redmine’s *My Page* and can be freely combined with standard widgets.
+
+---
+
 ## Features at a glance
 
-- 📌 **Updates since you last read**
+- **Updates since you last read**
   - Prioritized list of issues with new changes
   - Shows number of new entries and their authors
   - Manual and bulk “mark as read”
   - Policy-based restrictions on what can be marked as read
 
-- 👁 **Recently read issues**
+- **Recently read issues**
   - When you actually last read the issue
   - Sorted by real interaction, not metadata
 
-- ⏱ **Most read issues**
+- **Most read issues**
   - Time-based statistics per user
   - Shows where attention is actually spent
 
-- ⚙ **Advanced priority rules**
+- **Advanced priority rules**
   - Rule-based priority engine
   - Supports roles (assigned, author, watcher, mentioned)
   - Custom Field matchers (e.g. matching user email)
 
-- 🧠 **Debug mode**
+- **Debug mode**
   - Shows raw data, decision logic, and filter results
   - Local only via LocalStorage
+
+---
+
+## Priority rules and filters
+
+![Priority filters](bf_readup/doc/bf_readup_updates_settings.png)
+
+Users can control which prioritization rules are active, while system policies may enforce mandatory rules that cannot be disabled.
+
+---
+
+## Administration and settings
+
+![Admin settings](bf_readup/doc/bf_readup_admin_settings.png)
+
+Administrators can configure:
+- heartbeat interval
+- lookback period
+- maximum priority allowed for “mark as read”
+- full priority rule ordering
+- custom field matchers
+
+### Custom Field usage (Initiator concept)
+
+Internally, BF Readup uses a **Custom Field matcher** to identify the *initiator* of an issue.
+
+This is based on an internal custom field that represents the person who initiated the issue, which may differ from the user who technically created it in Redmine.
+
+Key characteristics of this setup:
+- the initiator field is **separate from Redmine’s user list**
+- it may contain values for people without system accounts
+- the field is kept **synchronized**, but not coupled, to Redmine users
+- this allows external participants or non-logged-in staff to be treated as first-class initiators
+
+This approach reflects real-world workflows where the originator of work is not always the same person who registers the issue in the system.
 
 ---
 
@@ -85,14 +161,19 @@ This is **not yet implemented**, but it is an explicit design intention.
 
 ---
 
-## Internationalization (Locales)
+## Language disclaimer (IMPORTANT)
 
-At present, UI text is largely hard-coded in Swedish.
+⚠️ **The plugin UI is currently hard-coded in Swedish.**
 
-🗺 Planned work includes:
-- gradually moving all strings to `config/locales`
-- enabling translation into additional languages
-- keeping Swedish as a first-class language
+At this stage:
+- all labels, texts, and messages are written in Swedish
+- no locale switching is available
+- this is a deliberate choice based on internal usage
+
+### Planned work
+- migrate all UI strings to `config/locales`
+- enable proper internationalization
+- keep Swedish as a first-class language
 
 ---
 
