@@ -35,11 +35,11 @@ The screenshot shows both widgets displayed side by side on *My Page*.
 These widgets intentionally display fewer columns than the *Updates since you last read* widget.  
 They focus on interaction history and reading time rather than change analysis, and the column sets are therefore deliberately different.
 
-#### Recently visited issues
+#### Recently visited issues (left side)
 
 Shows issues you have actually visited recently, based on real user interaction rather than metadata or timestamps.
 
-#### Most read issues
+#### Most read issues (right side)
 
 Shows where time is actually spent, based on accumulated reading time per issue.
 
