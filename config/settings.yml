@@ -1,0 +1,36 @@
+heartbeat_interval_seconds:
+  default: 30
+  type: integer
+
+lookback_days:
+  default: 7
+  type: integer
+
+mark_as_read_max_rank:
+  default: 0
+  type: integer
+  description: "Högsta tillåtna prioritet (rank) som får markeras som läst. 0 = ingen begränsning."
+
+columns:
+  default:
+    - key: "prio"
+      label: "Typ"
+    - key: "id"
+      label: "#"
+    - key: "project"
+      label: "Projekt"
+    - key: "subject"
+      label: "Ärende"
+    - key: "updated_on"
+      label: "Uppdaterad"
+  type: list
+
+prio_levels:
+  default: []
+  type: list
+  description: "Prio-regler enligt bf_readup 0.0.4-modellen."
+
+custom_field_matchers:
+  default: []
+  type: list
+  description: "Matcher-regler för Custom Fields."
