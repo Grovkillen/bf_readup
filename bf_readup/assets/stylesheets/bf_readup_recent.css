@@ -1,0 +1,39 @@
+.bf-readup-recent-sync.is-loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.bf-readup-recent-sync.is-loading::before {
+  animation: bf-spin 1s linear infinite;
+}
+
+.bf-readup-recent-footer {
+  margin-top: 0.5em;
+  display: none;
+}
+
+.bf-readup-recent-footer.is-visible {
+  display: block;
+}
+
+.bf-readup-recent-footer-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bf-readup-recent-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+#bf-readup-recent-pagination {
+  flex: 1;
+}
+
+@keyframes bf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

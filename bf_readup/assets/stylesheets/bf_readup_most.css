@@ -1,0 +1,45 @@
+/* --------------------------------------------------
+   Sync icon loading animation (shared pattern)
+-------------------------------------------------- */
+
+.bf-readup-most-sync.is-loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.bf-readup-most-sync.is-loading::before {
+  animation: bf-spin 1s linear infinite;
+}
+
+@keyframes bf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.bf-readup-most-footer {
+  margin-top: 0.5em;
+  display: none;
+}
+
+.bf-readup-most-footer.is-visible {
+  display: block;
+}
+
+.bf-readup-most-footer-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Expand-knappen */
+.bf-readup-most-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Pagination ska inte tryckas ned */
+#bf-readup-most-pagination {
+  flex: 1;
+}

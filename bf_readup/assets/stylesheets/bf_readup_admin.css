@@ -1,0 +1,77 @@
+/* ==========================
+   PRIORITY RULES LAYOUT
+   ========================== */
+
+#prio-rules-table th:nth-child(1),
+#prio-rules-table td:nth-child(1) {
+  width: 55px;
+}
+
+#prio-rules-table th:nth-child(2),
+#prio-rules-table td:nth-child(2) {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+}
+
+#prio-rules-table th:nth-child(3),
+#prio-rules-table td:nth-child(3) {
+  width: 320px;
+}
+
+#prio-rules-table th:nth-child(4),
+#prio-rules-table td:nth-child(4) {
+  width: 150px;
+}
+
+#prio-rules-table th:nth-child(5),
+#prio-rules-table td:nth-child(5) {
+  width: 150px;
+}
+
+#prio-rules-table th:nth-child(6),
+#prio-rules-table td:nth-child(6) {
+  width: 50px;
+  text-align: center;
+}
+
+#prio-rules-table th:nth-child(7),
+#prio-rules-table td:nth-child(7) {
+  width: 40px;
+  text-align: center;
+}
+
+/* ==========================
+   CF RULES LAYOUT
+   ========================== */
+
+#cf-rules-table th:nth-child(1),
+#cf-rules-table td:nth-child(1) {
+  width: 70px;
+}
+
+#cf-rules-table th:nth-child(2),
+#cf-rules-table td:nth-child(2) {
+  width: 200px;
+}
+
+#cf-rules-table th:nth-child(3),
+#cf-rules-table td:nth-child(3) {
+  width: 180px;
+}
+
+#cf-rules-table th:nth-child(4),
+#cf-rules-table td:nth-child(4) {
+  width: 40px;
+  text-align: center;
+}
+
+#prio-rules-table input,
+#cf-rules-table input {
+  width: 95%;
+}
+
+.bf-readup-admin button {
+	padding-left: 28px;
+	padding-right: 5px;
+}
