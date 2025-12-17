@@ -870,6 +870,13 @@ window.BF = window.BF || {};
 	};
 
   BF.isDebugEnabled = function () {
+    const expose = (BF.runtime.settings && BF.runtime.settings.expose_user_debug_option == 1);
+    if (!expose) {
+      if (localStorage.getItem("bf_readup_debug") === "1") {
+        localStorage.removeItem("bf_readup_debug");
+      }
+      return false;
+    }
     return localStorage.getItem("bf_readup_debug") === "1";
   };
 
@@ -933,8 +940,9 @@ window.BF = window.BF || {};
 		if (isNaN(ts)) return "—";
 
 		const diffSec = Math.floor((Date.now() - ts) / 1000);
+		const i18n = window.BF_READUP_I18N || {};
 
-		if (diffSec < 60) return "nyss";
+		if (diffSec < 60) return i18n.just_now || "just now";
 
 		const min = Math.floor(diffSec / 60);
 		if (min < 60) return `${min} min`;

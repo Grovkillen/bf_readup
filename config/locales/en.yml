@@ -9,6 +9,7 @@ en:
       mark_selected_read: "Mark selected as read"
       mark_as_read: "Mark as read"
       cannot_mark_as_read: "Can't be marked as read"
+      just_now: "just now"
     columns:
       issue: "Issue"
       project: "Project"

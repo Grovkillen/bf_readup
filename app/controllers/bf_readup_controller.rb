@@ -401,6 +401,10 @@ class BfReadupController < ApplicationController
 		prefs.others["bf_readup"] = data
 		prefs.save!
 
+		render json: {
+			status: "ok",
+			preferences: data
+		}
 	end
 
   # --------------------------------------------------------------------------
@@ -430,18 +434,16 @@ class BfReadupController < ApplicationController
     false
   end
 	
-	def serialize_issue(issue, extra = {})
-		{
-			id: issue.id,
+  def serialize_issue(issue, extra = {})
+    {
+      id: issue.id,
 
-			project: issue.project&.name,
-			project_identifier: issue.project&.identifier,
+      project: issue.project&.name,
+      project_identifier: issue.project&.identifier,
 
-			project_parents: issue.project.ancestors.map do |p|
-				{ id: p.id, name: p.name }
-			end,
+      project_parents: (issue.project ? issue.project.ancestors.map { |p| { id: p.id, name: p.name } } : []),
 
-			tracker: issue.tracker&.name,
+      tracker: issue.tracker&.name,
 			tracker_id: issue.tracker_id,
 
 			status: issue.status&.name,

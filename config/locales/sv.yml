@@ -9,6 +9,7 @@ sv:
       mark_selected_read: "Markera valda som lästa"
       mark_as_read: "Markera som läst"
       cannot_mark_as_read: "Kan inte markeras som läst"
+      just_now: "nyss"
     columns:
       issue: "Ärende"
       project: "Projekt"

@@ -37,7 +37,8 @@ module BfReadup
         mark_selected_require_selection: l(:'bf_readup.common.mark_selected_require_selection', default: 'Select at least one issue to use this action'),
         mark_selected_read:        l(:'bf_readup.common.mark_selected_read', default: 'Mark selected as read'),
         mark_as_read:              l(:'bf_readup.common.mark_as_read', default: 'Mark as read'),
-        cannot_mark_as_read:       l(:'bf_readup.common.cannot_mark_as_read', default: "Can't be marked as read")
+        cannot_mark_as_read:       l(:'bf_readup.common.cannot_mark_as_read', default: "Can't be marked as read"),
+        just_now:                  l(:'bf_readup.common.just_now', default: "just now")
       }
 
       tags << "<script>window.BF_READUP_I18N = #{i18n.to_json};</script>"

@@ -276,9 +276,37 @@ module BfReadup
     ###########################################################################
     def self.find_prio_match(issue, user, visit, levels)
       levels.sort_by { |p| p["rank"].to_i }.each do |prio|
-        next unless prio["method"]
-        next unless respond_to?(prio["method"], true)
-        return [prio["key"], prio] if send(prio["method"], issue, user, visit)
+        method_name = prio["method"]
+        next unless method_name
+
+        # Map some common keys to specific methods if they differ
+        actual_method = case method_name
+                        when "role"
+                          case prio["key"]
+                          when "assigned_to_me" then :assigned_now?
+                          when "author"         then :author?
+                          when "watcher"        then :watcher?
+                          else nil
+                          end
+                        when "content"
+                          case prio["key"]
+                          when "mentioned" then :mentioned_unread?
+                          else nil
+                          end
+                        when "state"
+                          case prio["key"]
+                          when "overdue"          then :overdue?
+                          when "behind_schedule"  then :behind_schedule?
+                          else nil
+                          end
+                        else
+                          method_name.to_sym if respond_to?(method_name.to_sym, true)
+                        end
+
+        next unless actual_method
+        next unless respond_to?(actual_method, true)
+
+        return [prio["key"], prio] if send(actual_method, issue, user, visit)
       end
       [nil, nil]
     end
@@ -397,6 +425,16 @@ module BfReadup
 
     def self.watcher?(issue, user, visit)
       issue.watcher_user_ids.include?(user.id)
+    end
+
+    def self.overdue?(issue, user, visit)
+      issue.due_date.present? && issue.due_date < Date.today
+    end
+
+    def self.behind_schedule?(issue, user, visit)
+      issue.done_ratio.to_i < issue.percent_for_due_date.to_i
+    rescue
+      false
     end
 
     def self.assigned_historic?(issue, user, visit)
