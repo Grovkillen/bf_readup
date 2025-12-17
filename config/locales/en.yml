@@ -10,11 +10,12 @@ en:
       mark_as_read: "Mark as read"
       cannot_mark_as_read: "Can't be marked as read"
       just_now: "just now"
+      empty: "No issues to display."
+      sync_title: "Refresh"
     columns:
       issue: "Issue"
       project: "Project"
       status: "Status"
-      last_read: "Last read"
       last_updated: "Last updated"
       last_viewed: "Last viewed"
       tracker: "Tracker"
@@ -61,17 +62,10 @@ en:
         settings_title: "Settings"
         header: "Updates since you last read"
         empty: "No unread issues to display."
-        show_more: "Show more"
       recent:
-        sync_title: "Refresh"
         header: "Recently visited issues"
-        empty: "No issues to display."
-        show_more: "Show more"
       most:
-        sync_title: "Refresh"
         header: "Most read issues right now"
-        empty: "No issues to display."
-        show_more: "Show more"
 
     updates_settings:
       legend_priorities: "Show priorities"

@@ -37,7 +37,7 @@ class BfReadupController < ApplicationController
     { "key" => "status",     "label" => "Status" },
     { "key" => "subject",    "label" => "Subject" },
     { "key" => "updated_on", "label" => "Last updated" },
-    { "key" => "read_ago",   "label" => "Since I read" },
+    { "key" => "last_viewed", "label" => "Last viewed" },
     { "key" => "activity_ago", "label" => "Latest activity" },
     { "key" => "new_count",  "label" => "New" }
   ].freeze
@@ -207,8 +207,8 @@ class BfReadupController < ApplicationController
 				updated_on: format_time(issue.updated_on),
 				updated_on_iso: issue.updated_on&.iso8601,
 
-				last_read_at_text: read_at ? format_time(read_at) : nil,
-				last_read_at_iso: read_at&.iso8601,
+				last_viewed_at_text: read_at ? format_time(read_at) : nil,
+				last_viewed_at_iso: read_at&.iso8601,
 
 				last_activity_at_text: u[:last_activity_at] ? format_time(u[:last_activity_at]) : nil,
 				last_activity_at_iso: u[:last_activity_at]&.iso8601,

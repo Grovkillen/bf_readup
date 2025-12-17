@@ -1,3 +1,7 @@
+<%
+  prio_levels = JSON.parse(@settings['prio_levels'] || '[]') rescue []
+  custom_field_matchers = JSON.parse(@settings['custom_field_matchers'] || '[]') rescue []
+%>
 <div class="bf-readup-admin">
 
   <h2><%= l(:'bf_readup.admin.title') %></h2>

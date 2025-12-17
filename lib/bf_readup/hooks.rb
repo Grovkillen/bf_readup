@@ -28,7 +28,6 @@ module BfReadup
         issue:                     l(:'bf_readup.columns.issue', default: 'Issue'),
         project:                   l(:'bf_readup.columns.project', default: 'Project'),
         time_spent:                l(:'bf_readup.columns.time_spent', default: 'Time'),
-        last_read:                 l(:'bf_readup.columns.last_read', default: 'Last read'),
         last_updated:              l(:'bf_readup.columns.last_updated', default: 'Last updated'),
         last_viewed:               l(:'bf_readup.columns.last_viewed', default: 'Last viewed'),
         tracker:                   l(:'bf_readup.columns.tracker', default: 'Tracker'),
@@ -38,7 +37,9 @@ module BfReadup
         mark_selected_read:        l(:'bf_readup.common.mark_selected_read', default: 'Mark selected as read'),
         mark_as_read:              l(:'bf_readup.common.mark_as_read', default: 'Mark as read'),
         cannot_mark_as_read:       l(:'bf_readup.common.cannot_mark_as_read', default: "Can't be marked as read"),
-        just_now:                  l(:'bf_readup.common.just_now', default: "just now")
+        just_now:                  l(:'bf_readup.common.just_now', default: "just now"),
+        empty:                     l(:'bf_readup.common.empty', default: "No issues to display."),
+        sync_title:                l(:'bf_readup.common.sync_title', default: "Refresh")
       }
 
       tags << "<script>window.BF_READUP_I18N = #{i18n.to_json};</script>"

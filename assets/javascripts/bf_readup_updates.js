@@ -731,21 +731,21 @@ window.BF = window.BF || {};
 			`;
 		}
 		
-		if (key === "read_ago" || key === "activity_ago") {
-			const iso =
-				key === "read_ago"
-					? row.last_read_at_iso
-					: row.last_activity_at_iso;
+		if (key === "last_viewed" || key === "activity_ago") {
+				const iso =
+					key === "last_viewed"
+						? row.last_viewed_at_iso
+						: row.last_activity_at_iso;
 
-			const text =
-				key === "read_ago"
-					? (row.last_read_at_text ? BF.humanTimeAgo(iso) : "—")
-					: (row.last_activity_at_text ? BF.humanTimeAgo(iso) : "—");
+				const text =
+					key === "last_viewed"
+						? (row.last_viewed_at_text ? BF.humanTimeAgo(iso) : "—")
+						: (row.last_activity_at_text ? BF.humanTimeAgo(iso) : "—");
 
-			const title =
-				key === "read_ago"
-					? (row.last_read_at_text || "")
-					: (row.last_activity_at_text || "");
+				const title =
+					key === "last_viewed"
+						? (row.last_viewed_at_text || "")
+						: (row.last_activity_at_text || "");
 
 			return `
 				<td class="${key}" title="${title}">
@@ -1894,20 +1894,20 @@ ${JSON.stringify(row.debug, null, 2)}
 			// ------------------------------
 			// READ_AGO / ACTIVITY_AGO
 			// ------------------------------
-			if (key === "read_ago" || key === "activity_ago") {
+			if (key === "last_viewed" || key === "activity_ago") {
 				const iso =
-					key === "read_ago"
-						? row.last_read_at_iso
+					key === "last_viewed"
+						? row.last_viewed_at_iso
 						: row.last_activity_at_iso;
 
 				const text =
-					key === "read_ago"
-						? (row.last_read_at_text ? BF.humanTimeAgo(iso) : "—")
+					key === "last_viewed"
+						? (row.last_viewed_at_text ? BF.humanTimeAgo(iso) : "—")
 						: (row.last_activity_at_text ? BF.humanTimeAgo(iso) : "—");
 
 				const title =
-					key === "read_ago"
-						? (row.last_read_at_text || "")
+					key === "last_viewed"
+						? (row.last_viewed_at_text || "")
 						: (row.last_activity_at_text || "");
 
 				// PATCHA ENDAST TEXTNOD
