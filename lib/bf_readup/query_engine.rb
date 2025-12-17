@@ -428,11 +428,17 @@ module BfReadup
     end
 
     def self.overdue?(issue, user, visit)
-      issue.due_date.present? && issue.due_date < Date.today
+      return false unless issue.due_date.present? && issue.due_date < Date.today
+      
+      # Only for watchers, current assignees, or historical assignees
+      watcher?(issue, user, visit) || assigned_now?(issue, user, visit) || assigned_historic?(issue, user, visit)
     end
 
     def self.behind_schedule?(issue, user, visit)
-      issue.done_ratio.to_i < issue.percent_for_due_date.to_i
+      return false unless issue.done_ratio.to_i < issue.percent_for_due_date.to_i
+
+      # Only for watchers, current assignees, or historical assignees
+      watcher?(issue, user, visit) || assigned_now?(issue, user, visit) || assigned_historic?(issue, user, visit)
     rescue
       false
     end
