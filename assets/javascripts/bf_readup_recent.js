@@ -191,12 +191,12 @@ window.BF = window.BF || {};
       `;
     }
 
-		if (key === "last_read_at") {
-			const iso = row.last_read_at;
+		if (key === "last_viewed_at") {
+			const iso = row.last_viewed_at;
 			const text = iso ? BF.humanTimeAgo(iso) : "—";
 			const title = iso ? new Date(iso).toLocaleString() : "";
 
-			return `<td class="last_read" title="${title}">${text}</td>`;
+			return `<td class="last_viewed" title="${title}">${text}</td>`;
 		}
 
     return `<td class="${key}">${row[key] ?? ""}</td>`;
@@ -217,7 +217,7 @@ window.BF = window.BF || {};
 				<th class="id">#</th>
 				<th class="subject">${(window.BF_READUP_I18N && BF_READUP_I18N.subject) || 'Subject'}</th>
 				<th class="project">${(window.BF_READUP_I18N && BF_READUP_I18N.project) || 'Project'}</th>
-				<th class="last_read">${(window.BF_READUP_I18N && BF_READUP_I18N.last_read) || 'Last read'}</th>
+				<th class="last_viewed">${(window.BF_READUP_I18N && BF_READUP_I18N.last_viewed) || 'Last viewed'}</th>
 			</tr>
 		`;
 
@@ -230,7 +230,7 @@ window.BF = window.BF || {};
 				${renderCell(row, "id")}
 				${renderCell(row, "subject")}
 				${renderCell(row, "project")}
-				${renderCell(row, "last_read_at")}
+				${renderCell(row, "last_viewed_at")}
 			</tr>
 		`).join("");
 

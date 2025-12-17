@@ -27,7 +27,7 @@
     <div class="bf-readup-recent-footer-inner">
       <button id="bf-readup-recent-expand" class="bf-readup-recent-expand">
         <span class="icon icon-zoom-in"></span>
-        <span class="label"><%= l(:'bf_readup.blocks.recent.show_more') %></span>
+        <span class="label"><%= l(:'bf_readup.common.show_more') %></span>
       </button>
       <div id="bf-readup-recent-pagination"></div>
     </div>
@@ -35,5 +35,6 @@
 
 </div>
 
+<%= javascript_include_tag 'bf_readup_shared', plugin: 'bf_readup' %>
 <%= javascript_include_tag 'bf_readup_recent', plugin: 'bf_readup' %>
 <%= stylesheet_link_tag  'bf_readup_recent', plugin: 'bf_readup' %>

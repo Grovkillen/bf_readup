@@ -33,7 +33,7 @@
 		<div class="bf-readup-most-footer-inner">
 			<button id="bf-readup-most-expand" class="bf-readup-most-expand">
 				<span class="icon icon-zoom-in"></span>
-				<span class="label"><%= l(:'bf_readup.blocks.most.show_more') %></span>
+				<span class="label"><%= l(:'bf_readup.common.show_more') %></span>
 			</button>
 			<div id="bf-readup-most-pagination"></div>
 		</div>
@@ -41,5 +41,6 @@
 
 </div>
 
+<%= javascript_include_tag 'bf_readup_shared', plugin: 'bf_readup' %>
 <%= javascript_include_tag 'bf_readup_most', plugin: 'bf_readup' %>
 <%= stylesheet_link_tag  'bf_readup_most', plugin: 'bf_readup' %>

@@ -774,25 +774,30 @@ window.BF = window.BF || {};
   // =========================================================================
   // 5.5) HUMAN READABLE STUFF
   // =========================================================================
-	BF.humanTimeAgo = function (iso) {
-		if (!iso) return "—";
+	if (!BF.humanTimeAgo) {
+		BF.humanTimeAgo = function (iso) {
+			if (!iso) return "—";
 
-		const ts = Date.parse(iso);
-		if (isNaN(ts)) return "—";
+			const ts = Date.parse(iso);
+			if (isNaN(ts)) return "—";
 
-		const diffSec = Math.floor((Date.now() - ts) / 1000);
+			const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-		if (diffSec < 60) return "nyss";
+			if (diffSec < 60) {
+				const justNow = (window.BF_READUP_I18N && BF_READUP_I18N.just_now) || "just now";
+				return justNow;
+			}
 
-		const min = Math.floor(diffSec / 60);
-		if (min < 60) return `${min} min`;
+			const min = Math.floor(diffSec / 60);
+			if (min < 60) return `${min} min`;
 
-		const h = Math.floor(min / 60);
-		if (h < 24) return `${h} h`;
+			const h = Math.floor(min / 60);
+			if (h < 24) return `${h} h`;
 
-		const d = Math.floor(h / 24);
-		return `${d} d`;
-	};
+			const d = Math.floor(h / 24);
+			return `${d} d`;
+		};
+	}
 
 	BF.getTotalRows = function () {
 		const rows = BF.rows || [];
@@ -978,13 +983,16 @@ window.BF = window.BF || {};
 		const startItem = (page - 1) * BF.UI.EXPANDED_PER_PAGE + 1;
 		const endItem   = Math.min(page * BF.UI.EXPANDED_PER_PAGE, total);
 
+		const prevLabel = (window.BF_READUP_I18N && BF_READUP_I18N.previous_label) || '« Previous';
+		const nextLabel = (window.BF_READUP_I18N && BF_READUP_I18N.next_label) || 'Next »';
+
 		let html = `
 			<span class="pagination">
 				<ul class="pages">
 					<li class="previous ${page === 1 ? "" : "page"}">
 						${page === 1
-							? `<span>« Föregående</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page - 1}" aria-label="Föregående">« Föregående</a>`}
+							? `<span>${prevLabel}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page - 1}" aria-label="${prevLabel}">${prevLabel}</a>`}
 					</li>
 		`;
 
@@ -999,8 +1007,8 @@ window.BF = window.BF || {};
 		html += `
 					<li class="next ${page === pages ? "" : "page"}">
 						${page === pages
-							? `<span>Nästa »</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page + 1}" aria-label="Nästa">Nästa »</a>`}
+							? `<span>${nextLabel}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page + 1}" aria-label="${nextLabel}">${nextLabel}</a>`}
 					</li>
 				</ul>
 				<span>
@@ -1056,7 +1064,7 @@ window.BF = window.BF || {};
 							 ${locked ? "disabled" : ""}>
 				<span class="bf-prio-icon">${p.icon}</span>
 				<span class="bf-prio-label">${p.label}</span>
-				${locked ? `<span class="bf-prio-locked">(låst)</span>` : ""}
+				${locked ? `<span class="bf-prio-locked">(${(window.BF_READUP_I18N && BF_READUP_I18N.locked) || 'locked'})</span>` : ""}
 			`;
 
 			host.appendChild(label);
