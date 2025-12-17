@@ -1,5 +1,28 @@
 sv:
   bf_readup:
+    common:
+      show_more: "Visa fler"
+      show_less: "Visa färre"
+      next_label: "Nästa »"
+      previous_label: "« Föregående"
+      mark_selected_require_selection: "Markera minst ett ärende för att använda funktionen"
+      mark_selected_read: "Markera valda som lästa"
+      mark_as_read: "Markera som läst"
+      cannot_mark_as_read: "Kan inte markeras som läst"
+    columns:
+      issue: "Ärende"
+      project: "Projekt"
+      status: "Status"
+      last_read: "Senast läst"
+      last_updated: "Senast ändrad"
+      last_viewed: "Senast visad"
+      tracker: "Ärendetyp"
+      subject: "Ämne"
+      read_ago: "Sedan jag läste"
+      activity_ago: "Senaste aktivitet"
+      new_count: "Nytt"
+      type: "Typ"
+      time_spent: "Tid"
     admin:
       title: "BF Readup – Inställningar"
       general: "Allmänt"
@@ -41,3 +64,12 @@ sv:
         header: "Mest lästa ärenden just nu"
         empty: "Inga ärenden att visa."
         show_more: "Visa fler"
+
+    updates_settings:
+      legend_priorities: "Visa prioriteringar"
+      policy_hint: "Vissa prioriteringar kan inte döljas enligt systempolicy."
+      hide_closed: "Göm stängda ärenden"
+      debug_enable: "Aktivera debug-läge (lokalt)"
+      debug_hint: "Debug-läge visar rådata, filterresultat och skickar debug: true till backend. Endast synligt för dig via LocalStorage."
+
+    plugin_description: "Spårning av lästa och olästa ändringar i ärenden"
