@@ -3,19 +3,19 @@
 <div class="contextual">
   <a href="#"
      class="icon-only icon-reload bf-readup-most-sync"
-     title="Uppdatera"></a>
+     title="<%= l(:'bf_readup.blocks.most.sync_title') %>"></a>
 </div>
 
 <div class="bf-readup-most">
 
 	<h3 class="bf-readup-most-header">
-		Mest lästa ärenden just nu (<span id="bf-readup-most-total-count">0</span>)
+		<%= l(:'bf_readup.blocks.most.header') %> (<span id="bf-readup-most-total-count">0</span>)
 	</h3>
 
 	<p id="bf-readup-most-empty"
 		 class="nodata"
 		 style="display:none; margin:1em 0;">
-		Inga ärenden att visa.
+		<%= l(:'bf_readup.blocks.most.empty') %>
 	</p>
 
 	<table id="bf-readup-most-table" class="list issues">
@@ -33,7 +33,7 @@
 		<div class="bf-readup-most-footer-inner">
 			<button id="bf-readup-most-expand" class="bf-readup-most-expand">
 				<span class="icon icon-zoom-in"></span>
-				<span class="label">Visa fler</span>
+				<span class="label"><%= l(:'bf_readup.blocks.most.show_more') %></span>
 			</button>
 			<div id="bf-readup-most-pagination"></div>
 		</div>

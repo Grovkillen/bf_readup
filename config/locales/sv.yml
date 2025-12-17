@@ -1,0 +1,43 @@
+sv:
+  bf_readup:
+    admin:
+      title: "BF Readup – Inställningar"
+      general: "Allmänt"
+      heartbeat_interval_seconds: "Heartbeat-intervall (sekunder):"
+      lookback_days: "Lookback (dagar):"
+      mark_as_read_max_rank: "Max rank (prio) för \"Markera som läst\":"
+      mark_as_read_max_rank_hint: "0 = ingen begränsning"
+      priority_rules: "Prioritetsregler"
+      cf_rules: "CF-regler (Custom Field Matchers)"
+      add_priority_rule: "Lägg till prioritetsregel"
+      add_cf_rule: "Lägg till CF-regel"
+      table:
+        rank: "Rank"
+        icon: "Ikon"
+        label: "Etikett"
+        key: "Nyckel"
+        method: "Metod"
+        active: "Aktiv"
+        delete: "Ta bort"
+        cf_id: "CF-ID"
+        pattern: "Mönster"
+        priority_key: "Prioritetsnyckel"
+
+    blocks:
+      updates:
+        bulk_mark_read_title: "Markera minst ett ärende för att använda funktionen"
+        sync_title: "Synka uppdateringar"
+        settings_title: "Inställningar"
+        header: "Uppdateringar sedan du senast läste"
+        empty: "Inga olästa ärenden att visa."
+        show_more: "Visa fler"
+      recent:
+        sync_title: "Uppdatera"
+        header: "Senast besökta ärenden"
+        empty: "Inga ärenden att visa."
+        show_more: "Visa fler"
+      most:
+        sync_title: "Uppdatera"
+        header: "Mest lästa ärenden just nu"
+        empty: "Inga ärenden att visa."
+        show_more: "Visa fler"

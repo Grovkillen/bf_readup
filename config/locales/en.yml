@@ -1,0 +1,43 @@
+en:
+  bf_readup:
+    admin:
+      title: "BF Readup – Settings"
+      general: "General"
+      heartbeat_interval_seconds: "Heartbeat interval (seconds):"
+      lookback_days: "Lookback (days):"
+      mark_as_read_max_rank: "Max rank (priority) for \"Mark as read\":"
+      mark_as_read_max_rank_hint: "0 = no limit"
+      priority_rules: "Priority rules"
+      cf_rules: "CF rules (Custom Field Matchers)"
+      add_priority_rule: "Add priority rule"
+      add_cf_rule: "Add CF rule"
+      table:
+        rank: "Rank"
+        icon: "Icon"
+        label: "Label"
+        key: "Key"
+        method: "Method"
+        active: "Active"
+        delete: "Delete"
+        cf_id: "CF ID"
+        pattern: "Pattern"
+        priority_key: "Priority key"
+
+    blocks:
+      updates:
+        bulk_mark_read_title: "Select at least one issue to use this action"
+        sync_title: "Sync updates"
+        settings_title: "Settings"
+        header: "Updates since you last read"
+        empty: "No unread issues to display."
+        show_more: "Show more"
+      recent:
+        sync_title: "Refresh"
+        header: "Recently visited issues"
+        empty: "No issues to display."
+        show_more: "Show more"
+      most:
+        sync_title: "Refresh"
+        header: "Most read issues right now"
+        empty: "No issues to display."
+        show_more: "Show more"

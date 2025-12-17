@@ -14,54 +14,54 @@ custom_field_matchers =
 
 <div class="bf-readup-admin">
 
-  <h2>BF Readup – Inställningar</h2>
+  <h2><%= l(:'bf_readup.admin.title') %></h2>
 
   <!-- ====================== -->
-  <!--  Allmänt -->
+  <!--  General -->
   <!-- ====================== -->
   <fieldset class="box">
-    <legend>Allmänt</legend>
+    <legend><%= l(:'bf_readup.admin.general') %></legend>
 
     <p>
-      <label>Heartbeat-intervall (sekunder):</label>
+      <label><%= l(:'bf_readup.admin.heartbeat_interval_seconds') %></label>
       <input type="number" name="settings[heartbeat_interval_seconds]"
         value="<%= @settings['heartbeat_interval_seconds'] %>" min="1" size="6">
     </p>
 
     <p>
-      <label>Lookback (dagar):</label>
+      <label><%= l(:'bf_readup.admin.lookback_days') %></label>
       <input type="number" name="settings[lookback_days]"
         value="<%= @settings['lookback_days'] %>" min="1" size="6">
     </p>
 		
 		<p>
-			<label>Max rank (prio) för "Markera som läst":</label>
+			<label><%= l(:'bf_readup.admin.mark_as_read_max_rank') %></label>
 			<input
 				type="number"
 				name="settings[mark_as_read_max_rank]"
 				value="<%= @settings['mark_as_read_max_rank'] %>"
 				min="0"
 				size="6">
-			<em>0 = ingen begränsning</em>
+			<em><%= l(:'bf_readup.admin.mark_as_read_max_rank_hint') %></em>
 		</p>
   </fieldset>
 
   <!-- ====================== -->
-  <!--  Prioritetsregler -->
+  <!--  Priority rules -->
   <!-- ====================== -->
   <fieldset class="box">
-    <legend>Prioritetsregler</legend>
+    <legend><%= l(:'bf_readup.admin.priority_rules') %></legend>
 
     <table class="list" id="prio-rules-table">
       <thead>
         <tr>
-          <th>Rank</th>
-          <th>Ikon</th>
-          <th>Etikett</th>
-          <th>Nyckel</th>
-          <th>Metod</th>
-          <th>Aktiv</th>
-          <th>Ta bort</th>
+          <th><%= l(:'bf_readup.admin.table.rank') %></th>
+          <th><%= l(:'bf_readup.admin.table.icon') %></th>
+          <th><%= l(:'bf_readup.admin.table.label') %></th>
+          <th><%= l(:'bf_readup.admin.table.key') %></th>
+          <th><%= l(:'bf_readup.admin.table.method') %></th>
+          <th><%= l(:'bf_readup.admin.table.active') %></th>
+          <th><%= l(:'bf_readup.admin.table.delete') %></th>
         </tr>
       </thead>
 
@@ -80,24 +80,24 @@ custom_field_matchers =
       </tbody>
     </table>
 
-    <button type="button" class="icon icon-add" id="add-prio-rule">Lägg till prioritetsregel</button>
+    <button type="button" class="icon icon-add" id="add-prio-rule"><%= l(:'bf_readup.admin.add_priority_rule') %></button>
 
     <input type="hidden" name="settings[prio_levels]" id="prio-rules-json">
   </fieldset>
 
   <!-- ====================== -->
-  <!--  CF-Regler -->
+  <!--  CF rules -->
   <!-- ====================== -->
   <fieldset class="box">
-    <legend>CF-regler (Custom Field Matchers)</legend>
+    <legend><%= l(:'bf_readup.admin.cf_rules') %></legend>
 
     <table class="list" id="cf-rules-table">
       <thead>
         <tr>
-          <th>CF-ID</th>
-          <th>Mönster</th>
-          <th>Prioritetsnyckel</th>
-          <th>Ta bort</th>
+          <th><%= l(:'bf_readup.admin.table.cf_id') %></th>
+          <th><%= l(:'bf_readup.admin.table.pattern') %></th>
+          <th><%= l(:'bf_readup.admin.table.priority_key') %></th>
+          <th><%= l(:'bf_readup.admin.table.delete') %></th>
         </tr>
       </thead>
 
@@ -113,7 +113,7 @@ custom_field_matchers =
       </tbody>
     </table>
 
-    <button type="button" class="icon icon-add" id="add-cf-rule">Lägg till CF-regel</button>
+    <button type="button" class="icon icon-add" id="add-cf-rule"><%= l(:'bf_readup.admin.add_cf_rule') %></button>
 
     <input type="hidden" name="settings[custom_field_matchers]" id="cf-rules-json">
   </fieldset>

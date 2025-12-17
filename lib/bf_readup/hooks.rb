@@ -56,7 +56,7 @@ module BfReadup
     def controller_my_page_blocks_edit_before_save(context = {})
       return unless context[:block] == "bf_readup"
 
-      # Detta kommer från <select name="bf_readup_columns[]">
+      # This comes from the settings form: <select name="bf_readup_columns[]">
       columns = context.dig(:params, :bf_readup_columns)
 
       if columns.is_a?(Array)
