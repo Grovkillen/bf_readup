@@ -268,7 +268,7 @@ module BfReadup
 
       pl = JSON.parse(raw) rescue []
       pl = pl.is_a?(Array) ? pl : []
-      pl.select { |p| p["active"] }
+      pl.select { |p| p["active"] == "on" }
     end
 
     ###########################################################################

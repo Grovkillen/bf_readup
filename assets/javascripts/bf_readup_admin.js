@@ -189,8 +189,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // SERIALIZE ON FORM SUBMIT
   // ============================
 
-  const form = document.querySelector("#settings form");
-  form?.addEventListener("submit", (e) => {
+  const form = document.querySelector("#settings form") || document.querySelector("form[action*='settings/plugin/bf_readup']");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      console.log("BF Readup: Serializing settings before submit...");
 
     // Priority rules → JSON
     const pr = [...prTable.querySelectorAll("tr")].map((tr, idx) => {
@@ -247,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }));
 
     cfJson.value = JSON.stringify(cf);
-  });
+    });
+  }
 
 });
