@@ -40,24 +40,21 @@ window.BF = window.BF || {};
 
   // -------------------------------------------------------------------------
   // HELPERS
+  // Use shared BF.humanTimeAgo from bf_readup_shared.js; provide a neutral
+  // fallback without Swedish literals if missing.
   // -------------------------------------------------------------------------
   if (!BF.humanTimeAgo) {
     BF.humanTimeAgo = function (iso) {
       if (!iso) return "—";
-
       const ts = Date.parse(iso);
       if (isNaN(ts)) return "—";
-
       const diffSec = Math.floor((Date.now() - ts) / 1000);
-
-      if (diffSec < 60) return "nyss";
-
+      const i18n = (window.BF_READUP_I18N || {});
+      if (diffSec < 60) return i18n.just_now || "just now";
       const min = Math.floor(diffSec / 60);
       if (min < 60) return `${min} min`;
-
       const h = Math.floor(min / 60);
       if (h < 24) return `${h} h`;
-
       const d = Math.floor(h / 24);
       return `${d} d`;
     };

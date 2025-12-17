@@ -5,7 +5,9 @@ Rails.application.routes.draw do
   post 'bf_readup/updates', 					to: 'bf_readup#updates'
 	post "bf_readup/mark_as_read",  		to: "bf_readup#mark_as_read"
 	post "bf_readup/mark_all_as_read",  to: "bf_readup#mark_all_as_read"
-	
+  # Lightweight telemetry endpoint for tab/focus signals
+  post 'bf_readup/telemetry',      to: 'bf_readup#telemetry'
+  
   post 'bf_readup/preferences',       to: 'bf_readup#preferences'
   get  'bf_readup/preferences',       to: 'bf_readup#preferences'
 

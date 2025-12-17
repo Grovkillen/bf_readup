@@ -126,6 +126,54 @@
                     session_id: sessionId
                 });
             });
+
+            // --------------------------------------------------
+            // Frontend telemetry: focus/blur/visibilitychange
+            // Rate limit: at most 1 POST per 10 seconds
+            // --------------------------------------------------
+            let lastSentAt = 0;
+            let pending = null;
+            let timer = null;
+
+            function postTelemetry(payload) {
+                return send(`${ROOT}bf_readup/telemetry`, {
+                    issue_id: issueId,
+                    session_id: sessionId,
+                    data: payload
+                }).catch(() => {});
+            }
+
+            function nowMs() { return Date.now(); }
+
+            function queue(evtName) {
+                const payload = {
+                    event: evtName,
+                    in_focus: document.hasFocus ? document.hasFocus() : true,
+                    visibility: (document.visibilityState || '').toString()
+                };
+
+                const elapsed = nowMs() - lastSentAt;
+                if (elapsed >= 10000 && !timer) {
+                    lastSentAt = nowMs();
+                    postTelemetry(payload);
+                } else {
+                    pending = payload;
+                    if (!timer) {
+                        const wait = Math.max(0, 10000 - elapsed);
+                        timer = setTimeout(() => {
+                            timer = null;
+                            if (!pending) return;
+                            lastSentAt = nowMs();
+                            postTelemetry(pending);
+                            pending = null;
+                        }, wait);
+                    }
+                }
+            }
+
+            window.addEventListener('focus', () => queue('focus'));
+            window.addEventListener('blur', () => queue('blur'));
+            document.addEventListener('visibilitychange', () => queue('visibilitychange'));
         }
 
         tryDetect();

@@ -11,6 +11,13 @@
   <a href="#"
      class="icon-only icon-settings bf-readup-updates-open-settings"
      title="<%= l(:'bf_readup.blocks.updates.settings_title') %>"></a>
+
+  <span id="bf-readup-updates-sync-status"
+        class="bf-readup-sync-status"
+        style="margin-left:8px; font-size:11px; color:#777; white-space:nowrap;"
+        title="">
+    <!-- filled by JS -->
+  </span>
 </div>
 
 <h3 class="bf-readup-updates-header">
@@ -43,7 +50,7 @@
   <!-- MAXIMERA / MINIMERA -->
 	<button id="bf-readup-updates-expand" class="bf-readup-updates-expand">
 		<span class="icon icon-zoom-in"></span>
-	<span class="label"><%= l(:'bf_readup.common.show_more') %></span>
+ 	<span class="label"><%= l(:'bf_readup.blocks.updates.show_more') %></span>
 	</button>
 
   <!-- PAGINATION (Redmine-style, renderas av JS) -->

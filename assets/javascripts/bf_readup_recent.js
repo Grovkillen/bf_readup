@@ -40,24 +40,21 @@ window.BF = window.BF || {};
 
   // -------------------------------------------------------------------------
   // HELPERS
+  // Use shared BF.humanTimeAgo from bf_readup_shared.js; provide a neutral
+  // fallback without Swedish literals if missing.
   // -------------------------------------------------------------------------
   if (!BF.humanTimeAgo) {
     BF.humanTimeAgo = function (iso) {
       if (!iso) return "—";
-
       const ts = Date.parse(iso);
       if (isNaN(ts)) return "—";
-
       const diffSec = Math.floor((Date.now() - ts) / 1000);
-
-      if (diffSec < 60) return "nyss";
-
+      const i18n = (window.BF_READUP_I18N || {});
+      if (diffSec < 60) return i18n.just_now || "just now";
       const min = Math.floor(diffSec / 60);
       if (min < 60) return `${min} min`;
-
       const h = Math.floor(min / 60);
       if (h < 24) return `${h} h`;
-
       const d = Math.floor(h / 24);
       return `${d} d`;
     };
@@ -191,12 +188,12 @@ window.BF = window.BF || {};
       `;
     }
 
-		if (key === "last_viewed_at") {
-			const iso = row.last_viewed_at;
+		if (key === "last_read_at") {
+			const iso = row.last_read_at;
 			const text = iso ? BF.humanTimeAgo(iso) : "—";
 			const title = iso ? new Date(iso).toLocaleString() : "";
 
-			return `<td class="last_viewed" title="${title}">${text}</td>`;
+			return `<td class="last_read" title="${title}">${text}</td>`;
 		}
 
     return `<td class="${key}">${row[key] ?? ""}</td>`;
@@ -217,7 +214,7 @@ window.BF = window.BF || {};
 				<th class="id">#</th>
 				<th class="subject">${(window.BF_READUP_I18N && BF_READUP_I18N.subject) || 'Subject'}</th>
 				<th class="project">${(window.BF_READUP_I18N && BF_READUP_I18N.project) || 'Project'}</th>
-				<th class="last_viewed">${(window.BF_READUP_I18N && BF_READUP_I18N.last_viewed) || 'Last viewed'}</th>
+				<th class="last_read">${(window.BF_READUP_I18N && BF_READUP_I18N.last_read) || 'Last read'}</th>
 			</tr>
 		`;
 
@@ -230,7 +227,7 @@ window.BF = window.BF || {};
 				${renderCell(row, "id")}
 				${renderCell(row, "subject")}
 				${renderCell(row, "project")}
-				${renderCell(row, "last_viewed_at")}
+				${renderCell(row, "last_read_at")}
 			</tr>
 		`).join("");
 

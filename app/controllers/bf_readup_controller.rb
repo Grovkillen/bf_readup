@@ -3,7 +3,7 @@ class BfReadupController < ApplicationController
   accept_api_auth :updates
 
   before_action :require_login
-	skip_before_action :verify_authenticity_token, only: [:updates, :mark_as_read, :mark_all_as_read]
+	skip_before_action :verify_authenticity_token, only: [:updates, :mark_as_read, :mark_all_as_read, :telemetry]
 
   # Dessa behövs inte för updates, därför exkluderade där
 	before_action :find_issue,
@@ -27,19 +27,19 @@ class BfReadupController < ApplicationController
 		]
 
   # --------------------------------------------------------------------------
-  # DEFAULT-KOLUMNDEFINITION (fallback)
+  # DEFAULT COLUMN DEFINITION (fallback)
   # --------------------------------------------------------------------------
   DEFAULT_COLUMNS = [
-    { "key" => "prio",       "label" => "Typ" },
+    { "key" => "prio",       "label" => "Type" },
     { "key" => "id",         "label" => "#" },
-    { "key" => "project",    "label" => "Projekt" },
-    { "key" => "tracker",    "label" => "Ärendetyp" },
+    { "key" => "project",    "label" => "Project" },
+    { "key" => "tracker",    "label" => "Tracker" },
     { "key" => "status",     "label" => "Status" },
-    { "key" => "subject",    "label" => "Ämne" },
-    { "key" => "updated_on", "label" => "Senast ändrad" },
-    { "key" => "read_ago", "label"   => "Sedan jag läste" },
-    { "key" => "activity_ago", "label" => "Senaste aktivitet" },
-    { "key" => "new_count",  "label" => "Nytt" }
+    { "key" => "subject",    "label" => "Subject" },
+    { "key" => "updated_on", "label" => "Last updated" },
+    { "key" => "read_ago",   "label" => "Since I read" },
+    { "key" => "activity_ago", "label" => "Latest activity" },
+    { "key" => "new_count",  "label" => "New" }
   ].freeze
 
   def columns
@@ -54,6 +54,11 @@ class BfReadupController < ApplicationController
     @visit.last_viewed_at    = Time.now
     @visit.last_ping_at      = Time.now
     @visit.last_journal_id   = params[:journal_id].to_i if params[:journal_id].present?
+    # Mirror in extra_data for telemetry/derivation
+    ed = @visit.extra_data || {}
+    ed["session"] ||= {}
+    ed["session"]["latest_enter_at"] = Time.current.utc.iso8601
+    @visit.extra_data = ed
     @visit.save!
     render json: { status: "ok" }
   end
@@ -64,6 +69,12 @@ class BfReadupController < ApplicationController
 
 		@visit.last_ping_at = now
 		@visit.total_seconds += interval
+
+		# Mirror in extra_data
+		ed = @visit.extra_data || {}
+		ed["session"] ||= {}
+		ed["session"]["latest_ping_at"] = now.utc.iso8601
+		@visit.extra_data = ed
 
 		if params[:journal_id].present?
 			client_journal_id = params[:journal_id].to_i
@@ -88,7 +99,60 @@ class BfReadupController < ApplicationController
 
   def exit
     @visit.last_viewed_at = Time.now
+    # Mirror in extra_data
+    ed = @visit.extra_data || {}
+    ed["session"] ||= {}
+    ed["session"]["last_exit_at"] = Time.current.utc.iso8601
+    @visit.extra_data = ed
     @visit.save!
+    render json: { status: "ok" }
+  end
+
+  # --------------------------------------------------------------------------
+  # LIGHTWEIGHT TELEMETRY (tab focus/visibility)
+  # --------------------------------------------------------------------------
+  def telemetry
+    # Expect JSON payload with keys under :data and require issue context
+    payload = params[:data] || {}
+
+    # Must have issue_id for visit context
+    unless params[:issue_id].present?
+      return render json: { status: "error", error: "issue_id required" }, status: :unprocessable_entity
+    end
+
+    # Build/find visit for current user/issue (no time side-effects)
+    @issue = Issue.find(params[:issue_id])
+    find_visit
+
+    ed = @visit.extra_data || {}
+    ed["tab"] ||= {}
+
+    # in_focus: boolean
+    if payload.key?(:in_focus) || payload.key?("in_focus")
+      ed["tab"]["in_focus"] = truthy?(payload[:in_focus] || payload["in_focus"])
+    end
+
+    # visibility: 'visible' | 'hidden'
+    if payload.key?(:visibility) || payload.key?("visibility")
+      vis = (payload[:visibility] || payload["visibility"]).to_s
+      ed["tab"]["visibility"] = %w[visible hidden].include?(vis) ? vis : ed["tab"]["visibility"]
+    end
+
+    # event timestamps
+    evt = (payload[:event] || payload["event"])&.to_s
+    now_iso = Time.current.utc.iso8601
+    case evt
+    when "focus"
+      ed["tab"]["last_focus_at"] = now_iso
+    when "blur"
+      ed["tab"]["last_blur_at"] = now_iso
+    when "visibilitychange"
+      ed["tab"]["last_visibility_change"] = now_iso
+    end
+
+    @visit.extra_data = ed
+    @visit.save!
+
     render json: { status: "ok" }
   end
 
@@ -354,6 +418,10 @@ class BfReadupController < ApplicationController
       user_id:  User.current.id,
       issue_id: @issue.id
     )
+  end
+
+  def truthy?(val)
+    val == true || val.to_s == "true" || val.to_s == "1"
   end
 
   def safe_behind_schedule(issue)
