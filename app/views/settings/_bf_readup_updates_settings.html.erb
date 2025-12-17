@@ -22,12 +22,14 @@
 <hr>
 
 <!-- C) DEBUG (lokalt) -->
-<label class="bf-debug-toggle">
-	<input type="checkbox" id="bf-readup-debug-checkbox">
-	<%= l(:'bf_readup.updates_settings.debug_enable') %>
-</label>
-<br>
-<small style="color:#777;">
-	<%= l(:'bf_readup.updates_settings.debug_hint') %>
-</small>
+<% if Setting.plugin_bf_readup && Setting.plugin_bf_readup['expose_user_debug_option'].to_s == '1' %>
+  <label class="bf-debug-toggle">
+      <input type="checkbox" id="bf-readup-debug-checkbox">
+      <%= l(:'bf_readup.updates_settings.debug_enable') %>
+  </label>
+  <br>
+  <small style="color:#777;">
+      <%= l(:'bf_readup.updates_settings.debug_hint') %>
+  </small>
+<% end %>
 

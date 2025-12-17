@@ -1,231 +1,77 @@
-# BF Readup
-
-BF Readup is a Redmine plugin that tracks **reading behavior per user and per issue** and presents this data in clear, actionable views on *My Page*.
-
-Unlike traditional “read/unread” solutions based on status flags or timestamps, BF Readup is built around **actual user interaction**:
-- when an issue is opened
-- how long it is viewed
-- which journals were actually visible
-- when the user can be proven to have seen the latest change
-
-The result is a far more accurate representation of what is genuinely *new to you*.
-
----
-
-## Widgets
-
-### Updates since you last read
-
-![Updates since last read](doc/bf_readup_updates.png)
-
-Shows issues with new activity since you last confirmed reading them.  
-Issues are prioritized using rule-based logic that takes roles, mentions, history, and system policies into account.
-
-The column set and column order in this view are currently **hard-coded by design**.  
-While the order is expected to remain stable, future versions may allow users to hide individual columns via personal settings.
-
----
-
-### Recently visited issues & Most read issues
-
-![Recently visited and most read widgets](doc/bf_readup_more_recent.png)
-
-The screenshot shows both widgets displayed side by side on *My Page*.
-
-These widgets intentionally display fewer columns than the *Updates since you last read* widget.  
-They focus on interaction history and reading time rather than change analysis, and the column sets are therefore deliberately different.
-
-#### Recently visited issues (left side)
-
-Shows issues you have actually visited recently, based on real user interaction rather than metadata or timestamps.
-
-#### Most read issues (right side)
-
-Shows where time is actually spent, based on accumulated reading time per issue.
-
----
-
-### My Page widget selection
-
-![My Page dropdown](doc/bf_readup_mypage_dropdown.png)
-
-BF Readup widgets integrate directly into Redmine’s *My Page* and can be freely combined with standard widgets.
-
----
-
-## Features at a glance
-
-- **Updates since you last read**
-  - Prioritized list of issues with new changes
-  - Shows number of new entries and their authors
-  - Manual and bulk “mark as read”
-  - Policy-based restrictions on what can be marked as read
-
-- **Recently read issues**
-  - When you actually last read the issue
-  - Sorted by real interaction, not metadata
-
-- **Most read issues**
-  - Time-based statistics per user
-  - Shows where attention is actually spent
-
-- **Advanced priority rules**
-  - Rule-based priority engine
-  - Supports roles (assigned, author, watcher, mentioned)
-  - Custom Field matchers (e.g. matching user email)
-
-- **Debug mode**
-  - Shows raw data, decision logic, and filter results
-  - Local only via LocalStorage
-
----
-
-## Priority rules and filters
-
-![Priority filters](doc/bf_readup_updates_settings.png)
-
-Users can control which prioritization rules are active, while system policies may enforce mandatory rules that cannot be disabled.
-
----
-
-## Administration and settings
-
-![Admin settings](doc/bf_readup_admin_settings.png)
-
-Administrators can configure:
-- heartbeat interval
-- lookback period
-- maximum priority allowed for “mark as read”
-- full priority rule ordering
-- custom field matchers
-
-### Custom Field usage (Initiator concept)
-
-Internally, BF Readup uses a **Custom Field matcher** to identify the *initiator* of an issue.
-
-This is based on an internal custom field that represents the person who initiated the issue, which may differ from the user who technically created it in Redmine.
-
-Key characteristics of this setup:
-- the initiator field is **separate from Redmine’s user list**
-- it may contain values for people without system accounts
-- the field is kept **synchronized**, but not coupled, to Redmine users
-- this allows external participants or non-logged-in staff to be treated as first-class initiators
-
-This approach reflects real-world workflows where the originator of work is not always the same person who registers the issue in the system.
-
----
-
-## Architecture overview
-
-BF Readup consists of three main parts:
-
-### Backend (Ruby / Rails)
-- `bf_readup_visits` table for tracking read interactions
-- A QueryEngine that determines:
-  - what is new
-  - what is prioritized
-  - what is allowed to be marked as read
-- Full interaction history stored in `extra_data`
-
-### Frontend (Vanilla JavaScript)
-- Turbo-safe initialization
-- Diff-based rendering (FLIP-inspired)
-- LocalStorage caching for performance
-- Time-based columns updated dynamically
-
-### UI integration
-- My Page blocks (Updates / Recent / Most)
-- Issue view (heartbeat + journal detection)
-- Admin UI for rules and settings
-
----
-
-## Database dependencies (IMPORTANT)
-
-⚠️ **The current codebase uses explicit PostgreSQL features.**
-
-Specifically:
-- `extra_data` is stored as **jsonb**
-- Indexing is done using **GIN indexes**
-- Certain “mark as read” operations are optimized for PostgreSQL
-
-➡️ This means the plugin is **not fully compatible with other databases** (such as MySQL) at this time.
-
-### Intended handling
-The intention is to:
-- internally detect the active database engine
-- automatically **disable PostgreSQL-specific optimizations** when unavailable
-- allow the plugin to run in a degraded but functional mode where reasonable
-
-This is **not yet implemented**, but it is an explicit design intention.
-
----
-
-## Language disclaimer (IMPORTANT)
-
-⚠️ **The plugin UI is currently hard-coded in Swedish.**
-
-At this stage:
-- all labels, texts, and messages are written in Swedish
-- no locale switching is available
-- this is a deliberate choice based on internal usage
-
-### Planned work
-- migrate all UI strings to `config/locales`
-- enable proper internationalization
-- keep Swedish as a first-class language
-
----
-
-## Project intention and scope
-
-BF Readup is:
-- ❌ **not a commercial plugin**
-- ❌ **not a community-driven roadmap project**
-- ❌ **not designed for maximum general compatibility**
-
-It is instead:
-- ✅ an **internal tool** developed alongside a Redmine rollout
-- ✅ a practical solution to real, day-to-day needs
-- ✅ an open codebase that others are welcome to learn from
-
-I am explicit that:
-- the project evolves based on my and my company’s needs
-- users “follow along” with the project’s direction, not the other way around
-- third-party demands on roadmap or direction are not accepted
-
-💡 **Good ideas, improvements, and bug fixes are always welcome.**
-
----
-
-## AI as a co-creator
-
-This project was developed with **ChatGPT as a co-creator**.
-
-This is:
-- openly acknowledged
-- a deliberate part of the development workflow
-- not hidden or downplayed
-
-Architecture, implementation, and decisions are always **human-reviewed and intentional**.
-
----
-
-## License and usage
-
-No formal license has been defined yet.
-
-Until then:
-- use the code at your own risk
-- no guarantees are provided
-- no long-term support commitments are implied
-
----
-
-## Version
-
-**bf_readup v0.0.10**
-
-The codebase is active and continues to evolve, but always with internal usefulness as the primary driver.
-
----
+BF Readup (Redmine plugin)
+
+Current version: 0.0.14
+
+Overview
+- Tracks which Redmine issues have unread changes for each user and prioritizes them.
+- My Page widgets (Updates, Recent, Most) show a compact list with quick actions.
+- Reading lifecycle: enter, ping, exit. Mirrors timestamps into extra_data (JSONB).
+- Client telemetry: tab focus/visibility signals stored in extra_data.tab.
+- Sync status indicator: shows when the widget last synced, persists via localStorage.
+
+Screenshots and visuals (to be updated)
+- [Image: Updates widget]
+- [Image: Recent/Most widgets]
+- [Image: Admin settings – priorities and general]
+
+Reading lifecycle
+- enter: sets first_entered_at (once), updates last_viewed_at and last_ping_at.
+- ping: periodically updates last_ping_at and aggregates total_seconds.
+- exit: updates last_viewed_at.
+Mirrored into extra_data.session as:
+- latest_enter_at, latest_ping_at, last_exit_at (ISO8601). Use latest_enter_at → latest_ping_at to derive latest session duration.
+
+Client telemetry (extra_data.tab)
+- in_focus (boolean), visibility (visible/hidden).
+- last_focus_at, last_blur_at, last_visibility_change (ISO8601).
+- Posted to bf_readup/telemetry; rate limited on the client.
+
+Prioritization
+- Factors include: assignee/author/watcher roles, mentions, historic states, and optional custom field matchers.
+- Settings influence which items appear and their ranking.
+
+Sync status UI
+- "Synced X ago" (relative), "syncing…" during refresh, "delayed" if stale, "not synced yet" when none.
+- Persists across reloads using localStorage key bf_readup_last_load.
+
+Settings (Admin guide)
+Location: Administration → Plugins → BF Readup → Configure
+- heartbeat_interval_seconds: ping interval in seconds during reading.
+- lookback_days: how far back to include updates.
+- columns: JSON array of table columns (key + label).
+- prio_levels: JSON array of priority levels. The Admin UI now enforces predefined keys/methods and ordering by drag-and-drop (rank = position).
+- custom_field_matchers: JSON array of matcher rules. Here you may reference a custom priority key of your own; this is the only place where typing a key is expected.
+- User preference: hide_closed_issues (some items may be enforced by policy).
+Effects:
+- Prioritization: prio_levels/custom_field_matchers shape badges and rank.
+- Visibility/inclusion: lookback_days and hide_closed_issues filter the list.
+- Icons/ranks/ordering: driven by priorities and recency.
+
+Admin defaults and rigidity
+- Load default priority list: Use the “Load default list” button to populate sensible defaults on first setup.
+- Drag-and-drop ordering: Move rows to change rank. Rank is inferred from position (top = 1). No need to edit rank numbers.
+- Predefined keys and methods: Priority “key” and “method” are selected from predefined values to prevent invalid configurations. Labels and icons remain editable.
+- Debug checkbox visibility: A global toggle controls whether the “Debug” checkbox is visible in the user’s Updates widget settings.
+
+Operational guidance
+- Heartbeat: Keep ≥ 10 seconds (minimum supported is 3 seconds, but not recommended). Lower intervals increase server traffic.
+- Lookback: Avoid very large values. After a long period of inactivity, a huge lookback can produce heavy fetches. Best practice is to keep up with the updates list.
+
+Database requirement – PostgreSQL
+- Required. Uses JSONB for extra_data and time-based querying patterns.
+- Other databases are not supported.
+
+Locales
+- English and Swedish locales are included. Update config/locales/en.yml and sv.yml as needed.
+ - Documentation and Admin UI labels reflect availability of locales.
+
+Versioning
+- init.rb defines the plugin version; ensure README matches before tagging.
+- Current version: 0.0.14.
+
+Backward compatibility
+- Existing endpoints (enter/ping/exit) remain unchanged.
+- New telemetry lives in extra_data only (no schema changes).
+
+License
+- See the root project license.
