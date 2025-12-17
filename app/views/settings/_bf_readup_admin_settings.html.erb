@@ -72,10 +72,11 @@
         <% prio_levels.each_with_index do |rule, idx| %>
           <tr data-index="<%= idx %>" draggable="true">
             <td class="pr-rank-display"><%= rule['rank'] || (idx + 1) %></td>
-            <td><input type="text"   class="pr-icon"      value="<%= rule['icon'] %>"></td>
+            <td><input type="text"   class="pr-icon"      value="<%= rule['icon'] %>" size="3"></td>
             <td><input type="text"   class="pr-label"     value="<%= rule['label'] %>"></td>
             <td>
               <select class="pr-key"></select>
+              <input type="text" class="pr-key-custom" value="" style="display:none;" placeholder="custom_key">
               <input type="hidden" class="pr-key-initial" value="<%= rule['key'] %>">
             </td>
             <td>

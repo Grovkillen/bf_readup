@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const ALLOWED_METHODS = [
     { value: "role",   label: "Role based" },
     { value: "state",  label: "State based" },
-    { value: "content",label: "Content based" }
+    { value: "content",label: "Content based" },
+    { value: "cf_match", label: "Custom Field Matcher" }
   ];
 
   const DEFAULT_RULES = [
@@ -41,29 +42,51 @@ document.addEventListener("DOMContentLoaded", () => {
     select.appendChild(opt);
   }
 
-  function populateSelects(tr) {
-    const selKey = tr.querySelector("select.pr-key");
+  function updateKeyVisibility(tr) {
     const selMethod = tr.querySelector("select.pr-method");
-    const keyInit = tr.querySelector(".pr-key-initial")?.value;
-    const methodInit = tr.querySelector(".pr-method-initial")?.value;
+    const selKey = tr.querySelector("select.pr-key");
+    const inputKey = tr.querySelector("input.pr-key-custom");
 
-    if (selKey && (selKey.options.length === 0 || !selKey.value)) {
-      if (selKey.options.length === 0) {
-        ALLOWED_KEYS.forEach(k => addOption(selKey, k.value, k.label));
-      }
-      if (keyInit) selKey.value = keyInit;
-    }
-    if (selMethod && (selMethod.options.length === 0 || !selMethod.value)) {
-      if (selMethod.options.length === 0) {
-        ALLOWED_METHODS.forEach(m => addOption(selMethod, m.value, m.label));
-      }
-      if (methodInit) selMethod.value = methodInit;
+    if (selMethod.value === "cf_match") {
+      selKey.style.display = "none";
+      inputKey.style.display = "inline-block";
+    } else {
+      selKey.style.display = "inline-block";
+      inputKey.style.display = "none";
     }
   }
 
+  function populateSelects(tr) {
+    const selKey = tr.querySelector("select.pr-key");
+    const selMethod = tr.querySelector("select.pr-method");
+    const inputKey = tr.querySelector("input.pr-key-custom");
+
+    const keyInit = tr.querySelector(".pr-key-initial")?.value;
+    const methodInit = tr.querySelector(".pr-method-initial")?.value;
+
+    if (selKey && selKey.options.length === 0) {
+      ALLOWED_KEYS.forEach(k => addOption(selKey, k.value, k.label));
+    }
+    if (selMethod && selMethod.options.length === 0) {
+      ALLOWED_METHODS.forEach(m => addOption(selMethod, m.value, m.label));
+    }
+
+    if (methodInit) selMethod.value = methodInit;
+
+    if (selMethod.value === "cf_match") {
+      if (keyInit) inputKey.value = keyInit;
+    } else {
+      if (keyInit) selKey.value = keyInit;
+    }
+
+    updateKeyVisibility(tr);
+  }
+
   function updateRanks() {
+    if (!prTable) return;
     [...prTable.querySelectorAll("tr")].forEach((tr, idx) => {
-      tr.querySelector(".pr-rank-display").textContent = String(idx + 1);
+      const rankDisplay = tr.querySelector(".pr-rank-display");
+      if (rankDisplay) rankDisplay.textContent = String(idx + 1);
     });
   }
 
@@ -72,10 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
     tr.setAttribute("draggable", "true");
     tr.innerHTML = `
       <td class="pr-rank-display"></td>
-      <td><input type="text" class="pr-icon" value="${rule?.icon || ''}"></td>
+      <td><input type="text" class="pr-icon" value="${rule?.icon || ''}" size="3"></td>
       <td><input type="text" class="pr-label" value="${rule?.label || ''}"></td>
       <td>
         <select class="pr-key"></select>
+        <input type="text" class="pr-key-custom" value="" style="display:none;" placeholder="custom_key">
         <input type="hidden" class="pr-key-initial" value="${rule?.key || ''}">
       </td>
       <td>
@@ -86,6 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <td><button type="button" class="icon icon-del pr-del"></button></td>
     `;
     populateSelects(tr);
+
+    tr.querySelector("select.pr-method").addEventListener("change", () => updateKeyVisibility(tr));
+
     return tr;
   }
 
@@ -162,18 +189,53 @@ document.addEventListener("DOMContentLoaded", () => {
   // SERIALIZE ON FORM SUBMIT
   // ============================
 
-  const form = document.querySelector("form[action*='bf_readup']");
-  form?.addEventListener("submit", () => {
+  const form = document.querySelector("#settings form");
+  form?.addEventListener("submit", (e) => {
 
     // Priority rules → JSON
-    const pr = [...prTable.querySelectorAll("tr")].map((tr, idx) => ({
-      rank:   idx + 1,
-      icon:   tr.querySelector(".pr-icon").value,
-      label:  tr.querySelector(".pr-label").value,
-      key:    tr.querySelector(".pr-key").value,
-      method: tr.querySelector(".pr-method").value,
-      active: tr.querySelector(".pr-active").checked ? "on" : "off"
-    }));
+    const pr = [...prTable.querySelectorAll("tr")].map((tr, idx) => {
+      const method = tr.querySelector(".pr-method").value;
+      const key = (method === "cf_match") 
+        ? tr.querySelector(".pr-key-custom").value 
+        : tr.querySelector(".pr-key").value;
+
+      return {
+        rank:   idx + 1,
+        icon:   tr.querySelector(".pr-icon").value,
+        label:  tr.querySelector(".pr-label").value,
+        key:    key,
+        method: method,
+        active: tr.querySelector(".pr-active").checked ? "on" : "off"
+      };
+    });
+
+    // Uniqueness validation
+    const usedMethods = new Set();
+    const usedCfKeys = new Set();
+    let error = null;
+
+    pr.forEach(rule => {
+      if (rule.method !== "cf_match") {
+        if (usedMethods.has(rule.method + ":" + rule.key)) {
+          error = `Duplicate priority method: ${rule.method} (${rule.key})`;
+        }
+        usedMethods.add(rule.method + ":" + rule.key);
+      } else {
+        if (!rule.key) {
+          error = "CF Matcher requires a key";
+        }
+        if (usedCfKeys.has(rule.key)) {
+          error = `Duplicate CF key: ${rule.key}`;
+        }
+        usedCfKeys.add(rule.key);
+      }
+    });
+
+    if (error) {
+      alert(error);
+      e.preventDefault();
+      return;
+    }
 
     prJson.value = JSON.stringify(pr);
 
