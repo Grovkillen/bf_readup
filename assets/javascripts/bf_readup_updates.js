@@ -431,7 +431,7 @@ window.BF = window.BF || {};
 			if (btn) {
 				btn.classList.add("is-disabled");
 				btn.setAttribute("aria-disabled", "true");
-				btn.title = "Markera minst ett ärende för att använda funktionen";
+				btn.title = (window.BF_READUP_I18N && BF_READUP_I18N.mark_selected_require_selection) || "Select at least one issue to use this action";
 			}
 			return;
 		}
@@ -449,8 +449,8 @@ window.BF = window.BF || {};
 		btn.classList.toggle("is-disabled", !enabled);
 		btn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		btn.title = enabled
-			? "Markera valda som lästa"
-			: "Markera minst ett ärende för att använda funktionen";
+			? ((window.BF_READUP_I18N && BF_READUP_I18N.mark_selected_read) || "Mark selected as read")
+			: ((window.BF_READUP_I18N && BF_READUP_I18N.mark_selected_require_selection) || "Select at least one issue to use this action");
 	};
 
 	BF.updateMasterCheckboxState = function () {
@@ -619,7 +619,7 @@ window.BF = window.BF || {};
 		
 		const btn = document.createElement("a");
 		btn.href = "javascript:void(0)";
-		btn.title = "Markera som läst";
+		btn.title = (window.BF_READUP_I18N && BF_READUP_I18N.mark_as_read) || "Mark as read";
 		btn.className = "bf-mark-read-btn";
 
 		Object.assign(btn.style, {
@@ -1278,7 +1278,7 @@ window.BF = window.BF || {};
 				<td class="checkbox">
 				<input type="checkbox"
 							 value="${row.id}"
-							 ${disabled ? "disabled title='Kan inte markeras som läst'" : ""}>
+  					 ${disabled ? `disabled title='${(window.BF_READUP_I18N && BF_READUP_I18N.cannot_mark_as_read) || "Can't be marked as read"}'` : ""}>
 
 				</td>
 			`;
@@ -1846,7 +1846,7 @@ ${JSON.stringify(row.debug, null, 2)}
 			<td class="checkbox">
 			<input type="checkbox"
 						 value="${row.id}"
-						 ${disabled ? "disabled title='Kan inte markeras som läst'" : ""}>
+  				 ${disabled ? `disabled title='${(window.BF_READUP_I18N && BF_READUP_I18N.cannot_mark_as_read) || "Can't be marked as read"}'` : ""}>
 			</td>
 		`;
 

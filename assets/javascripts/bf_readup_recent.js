@@ -215,9 +215,9 @@ window.BF = window.BF || {};
 		thead.innerHTML = `
 			<tr>
 				<th class="id">#</th>
-				<th class="subject">Ärende</th>
-				<th class="project">Projekt</th>
-				<th class="last_read">Senast läst</th>
+				<th class="subject">${(window.BF_READUP_I18N && BF_READUP_I18N.subject) || 'Subject'}</th>
+				<th class="project">${(window.BF_READUP_I18N && BF_READUP_I18N.project) || 'Project'}</th>
+				<th class="last_read">${(window.BF_READUP_I18N && BF_READUP_I18N.last_read) || 'Last read'}</th>
 			</tr>
 		`;
 
@@ -270,18 +270,20 @@ window.BF = window.BF || {};
 		const icon  = expandBtn.querySelector(".icon");
 
 		if (BF.recent.state.expanded) {
-			if (label) label.textContent = "Visa färre";
-			expandBtn.title = "Visa färre ärenden";
-			expandBtn.setAttribute("aria-label", "Visa färre ärenden");
+			const less = (window.BF_READUP_I18N && BF_READUP_I18N.show_less) || 'Show less';
+			if (label) label.textContent = less;
+			expandBtn.title = less;
+			expandBtn.setAttribute("aria-label", less);
 
 			if (icon) {
 				icon.classList.remove("icon-zoom-in");
 				icon.classList.add("icon-zoom-out");
 			}
 		} else {
-			if (label) label.textContent = "Visa fler";
-			expandBtn.title = "Visa fler ärenden";
-			expandBtn.setAttribute("aria-label", "Visa fler ärenden");
+			const more = (window.BF_READUP_I18N && BF_READUP_I18N.show_more) || 'Show more';
+			if (label) label.textContent = more;
+			expandBtn.title = more;
+			expandBtn.setAttribute("aria-label", more);
 
 			if (icon) {
 				icon.classList.remove("icon-zoom-out");
@@ -305,14 +307,17 @@ window.BF = window.BF || {};
     const startItem = (page - 1) * BF.recent.UI.PER_PAGE + 1;
     const endItem   = Math.min(page * BF.recent.UI.PER_PAGE, total);
 
+    const prevLabel = (window.BF_READUP_I18N && BF_READUP_I18N.previous_label) || '« Previous';
+    const nextLabel = (window.BF_READUP_I18N && BF_READUP_I18N.next_label) || 'Next »';
+
     let html = `
       <span class="pagination">
         <ul class="pages">
           <li class="previous ${page === 1 ? "" : "page"}">
             ${
               page === 1
-                ? `<span>« Föregående</span>`
-                : `<a href="#" class="bf-recent-page-link" data-page="${page - 1}">« Föregående</a>`
+                ? `<span>${prevLabel}</span>`
+                : `<a href="#" class="bf-recent-page-link" data-page="${page - 1}">${prevLabel}</a>`
             }
           </li>
     `;
@@ -327,8 +332,8 @@ window.BF = window.BF || {};
           <li class="next ${page === pages ? "" : "page"}">
             ${
               page === pages
-                ? `<span>Nästa »</span>`
-                : `<a href="#" class="bf-recent-page-link" data-page="${page + 1}">Nästa »</a>`
+                ? `<span>${nextLabel}</span>`
+                : `<a href="#" class="bf-recent-page-link" data-page="${page + 1}">${nextLabel}</a>`
             }
           </li>
         </ul>

@@ -1,13 +1,13 @@
 <!-- A) PRIORITETSFILTER -->
 <fieldset class="bf-settings-group">
-	<legend>Visa prioriteringar</legend>
+	<legend><%= l(:'bf_readup.updates_settings.legend_priorities') %></legend>
 
 	<div id="bf-readup-prio-list">
 		<!-- byggs dynamiskt -->
 	</div>
 
 	<small class="bf-settings-hint">
-		Vissa prioriteringar kan inte döljas enligt systempolicy.
+		<%= l(:'bf_readup.updates_settings.policy_hint') %>
 	</small>
 </fieldset>
 
@@ -15,7 +15,7 @@
 <fieldset class="bf-settings-group">
 	<label>
 		<input type="checkbox" id="bf-hide-closed">
-		Göm stängda ärenden
+		<%= l(:'bf_readup.updates_settings.hide_closed') %>
 	</label>
 </fieldset>
 
@@ -24,12 +24,10 @@
 <!-- C) DEBUG (lokalt) -->
 <label class="bf-debug-toggle">
 	<input type="checkbox" id="bf-readup-debug-checkbox">
-	Aktivera debug-läge (lokalt)
+	<%= l(:'bf_readup.updates_settings.debug_enable') %>
 </label>
 <br>
 <small style="color:#777;">
-	Debug-läge visar rådata, filterresultat och skickar
-	<code>debug: true</code> till backend.
-	Endast synligt för dig via LocalStorage.
+	<%= l(:'bf_readup.updates_settings.debug_hint') %>
 </small>
 
