@@ -47,12 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const keyInit = tr.querySelector(".pr-key-initial")?.value;
     const methodInit = tr.querySelector(".pr-method-initial")?.value;
 
-    if (selKey && selKey.options.length === 0) {
-      ALLOWED_KEYS.forEach(k => addOption(selKey, k.value, k.label));
+    if (selKey && (selKey.options.length === 0 || !selKey.value)) {
+      if (selKey.options.length === 0) {
+        ALLOWED_KEYS.forEach(k => addOption(selKey, k.value, k.label));
+      }
       if (keyInit) selKey.value = keyInit;
     }
-    if (selMethod && selMethod.options.length === 0) {
-      ALLOWED_METHODS.forEach(m => addOption(selMethod, m.value, m.label));
+    if (selMethod && (selMethod.options.length === 0 || !selMethod.value)) {
+      if (selMethod.options.length === 0) {
+        ALLOWED_METHODS.forEach(m => addOption(selMethod, m.value, m.label));
+      }
       if (methodInit) selMethod.value = methodInit;
     }
   }
@@ -126,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize existing rows (populate selects and ranks)
-  [...prTable.querySelectorAll("tr")].forEach(populateSelects);
+  [...prTable.querySelectorAll("tr")].forEach(tr => populateSelects(tr));
   updateRanks();
 
   // ============================
