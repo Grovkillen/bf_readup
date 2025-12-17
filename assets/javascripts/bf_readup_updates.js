@@ -184,9 +184,161 @@ window.BF = window.BF || {};
 			settingsPanel: document.getElementById(`${p}-settings`),
 			footer:        document.querySelector(`.${p}-footer`),
 			expandBtn:     document.getElementById(`${p}-expand`),
-			pagination:    document.getElementById(`${p}-pagination`)
+			pagination:    document.getElementById(`${p}-pagination`),
+			syncStatus:    document.getElementById(`${p}-sync-status`)
 		};
 	};
+
+  // =========================================================================
+  // 3.5) SYNC STATUS INDICATOR (uses localStorage 'bf_readup_last_load')
+  // =========================================================================
+  BF.updateSyncStatus = function () {
+    if (!BF.el || !BF.el.syncStatus) return;
+
+    const el = BF.el.syncStatus;
+    const i18n = window.BF_READUP_I18N || {};
+    const prefix = i18n.sync_last_synced_prefix || 'Synced';
+    const statusSyncing = i18n.sync_status_syncing || 'syncing…';
+    const statusRecent  = i18n.sync_status_recent  || 'recently synced';
+    const statusDelayed = i18n.sync_status_delayed || 'delayed';
+    const statusNever   = i18n.sync_status_never   || 'not synced yet';
+
+    const raw = localStorage.getItem('bf_readup_last_load');
+    const last = raw ? parseInt(raw, 10) : NaN;
+
+    let title = '';
+    let label = '';
+
+    if (BF.__mypage.loading) {
+      label = statusSyncing;
+      title = statusSyncing;
+    } else if (!raw || isNaN(last)) {
+      label = statusNever;
+      title = statusNever;
+    } else {
+      const ageSec = Math.floor((Date.now() - last) / 1000);
+      const iso = new Date(last).toISOString();
+      const rel = (BF.humanTimeAgo && BF.humanTimeAgo(iso)) || '';
+
+      if (ageSec < 120) {
+        label = `${prefix} ${rel}`; // e.g. "Synced 3 min ago"
+        title = statusRecent;
+      } else {
+        label = `${prefix} ${rel}`;
+        title = statusDelayed;
+      }
+    }
+
+    el.textContent = label;
+    el.setAttribute('title', title);
+  };
+
+ 	BF.startSyncTicker = function () {
+		if (BF.__mypage.syncTickerStarted) return;
+		BF.__mypage.syncTickerStarted = true;
+		// Refresh status every 30s
+		setInterval(BF.updateSyncStatus, 30000);
+	};
+
+  // =========================================================================
+  // 3.6) WRAP BF.loadData to toggle syncing state and persist last sync
+  // =========================================================================
+  (function wrapLoadDataForSync() {
+    if (!BF.loadData || BF.__mypage.loadWrapApplied) return;
+    BF.__mypage.loadWrapApplied = true;
+
+    const original = BF.loadData;
+    BF.loadData = function () {
+      try {
+        BF.__mypage.loading = true;
+        if (typeof BF.updateSyncStatus === 'function') BF.updateSyncStatus();
+
+        const result = original.apply(this, arguments);
+        if (result && typeof result.then === 'function') {
+          return result.then(function (res) {
+            try { localStorage.setItem('bf_readup_last_load', String(Date.now())); } catch (e) {}
+            BF.__mypage.loading = false;
+            if (typeof BF.updateSyncStatus === 'function') BF.updateSyncStatus();
+            if (typeof BF.startSyncTicker === 'function') BF.startSyncTicker();
+            return res;
+          }).catch(function (err) {
+            BF.__mypage.loading = false;
+            if (typeof BF.updateSyncStatus === 'function') BF.updateSyncStatus();
+            throw err;
+          });
+        } else {
+          try { localStorage.setItem('bf_readup_last_load', String(Date.now())); } catch (e) {}
+          BF.__mypage.loading = false;
+          if (typeof BF.updateSyncStatus === 'function') BF.updateSyncStatus();
+          if (typeof BF.startSyncTicker === 'function') BF.startSyncTicker();
+          return result;
+        }
+      } catch (e) {
+        BF.__mypage.loading = false;
+        if (typeof BF.updateSyncStatus === 'function') BF.updateSyncStatus();
+        throw e;
+      }
+    };
+  })();
+
+  // =========================================================================
+  // 3.7) FRONTEND TELEMETRY: focus/blur/visibilitychange → POST /bf_readup/telemetry
+  // =========================================================================
+  (function initTelemetrySignals() {
+    if (BF.__mypage.telemetryBound) return;
+    BF.__mypage.telemetryBound = true;
+
+    // Uses existing postForm helper used elsewhere in this file
+    function postTelemetry(payload) {
+      try {
+        // Gracefully ignore if postForm is missing
+        if (typeof postForm !== 'function') return;
+        postForm(`${BF_APP_ROOT}bf_readup/telemetry`, { data: payload }).catch(function () { /* silent */ });
+      } catch (_) { /* silent */ }
+    }
+
+    // Simple rate limit: at most 1 POST per 10s; keep last pending
+    let lastSentAt = 0;
+    let pending = null;
+    let timer = null;
+
+    function nowMs() { return Date.now(); }
+    function visibility() { return (document.visibilityState || '').toString(); }
+    function focused() { return typeof document.hasFocus === 'function' ? !!document.hasFocus() : true; }
+
+    function flush() {
+      timer = null;
+      if (!pending) return;
+      lastSentAt = nowMs();
+      postTelemetry(pending);
+      pending = null;
+    }
+
+    function queueSend(evtName) {
+      const payload = {
+        event: evtName,
+        in_focus: focused(),
+        visibility: visibility()
+      };
+
+      const elapsed = nowMs() - lastSentAt;
+      if (elapsed >= 10000 && !timer) {
+        // send immediately
+        lastSentAt = nowMs();
+        postTelemetry(payload);
+      } else {
+        pending = payload;
+        if (!timer) {
+          const wait = Math.max(0, 10000 - elapsed);
+          timer = setTimeout(flush, wait);
+        }
+      }
+    }
+
+    window.addEventListener('focus', function () { queueSend('focus'); });
+    window.addEventListener('blur', function () { queueSend('blur'); });
+    document.addEventListener('visibilitychange', function () { queueSend('visibilitychange'); });
+  })();
 
   // =========================================================================
   // 4) SETTINGS PANEL + DEBUG TOGGLE (bind once, delegate)
@@ -774,30 +926,25 @@ window.BF = window.BF || {};
   // =========================================================================
   // 5.5) HUMAN READABLE STUFF
   // =========================================================================
-	if (!BF.humanTimeAgo) {
-		BF.humanTimeAgo = function (iso) {
-			if (!iso) return "—";
+	BF.humanTimeAgo = function (iso) {
+		if (!iso) return "—";
 
-			const ts = Date.parse(iso);
-			if (isNaN(ts)) return "—";
+		const ts = Date.parse(iso);
+		if (isNaN(ts)) return "—";
 
-			const diffSec = Math.floor((Date.now() - ts) / 1000);
+		const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-			if (diffSec < 60) {
-				const justNow = (window.BF_READUP_I18N && BF_READUP_I18N.just_now) || "just now";
-				return justNow;
-			}
+		if (diffSec < 60) return "nyss";
 
-			const min = Math.floor(diffSec / 60);
-			if (min < 60) return `${min} min`;
+		const min = Math.floor(diffSec / 60);
+		if (min < 60) return `${min} min`;
 
-			const h = Math.floor(min / 60);
-			if (h < 24) return `${h} h`;
+		const h = Math.floor(min / 60);
+		if (h < 24) return `${h} h`;
 
-			const d = Math.floor(h / 24);
-			return `${d} d`;
-		};
-	}
+		const d = Math.floor(h / 24);
+		return `${d} d`;
+	};
 
 	BF.getTotalRows = function () {
 		const rows = BF.rows || [];
@@ -983,16 +1130,13 @@ window.BF = window.BF || {};
 		const startItem = (page - 1) * BF.UI.EXPANDED_PER_PAGE + 1;
 		const endItem   = Math.min(page * BF.UI.EXPANDED_PER_PAGE, total);
 
-		const prevLabel = (window.BF_READUP_I18N && BF_READUP_I18N.previous_label) || '« Previous';
-		const nextLabel = (window.BF_READUP_I18N && BF_READUP_I18N.next_label) || 'Next »';
-
 		let html = `
 			<span class="pagination">
 				<ul class="pages">
 					<li class="previous ${page === 1 ? "" : "page"}">
 						${page === 1
-							? `<span>${prevLabel}</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page - 1}" aria-label="${prevLabel}">${prevLabel}</a>`}
+							? `<span>« Föregående</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page - 1}" aria-label="Föregående">« Föregående</a>`}
 					</li>
 		`;
 
@@ -1007,8 +1151,8 @@ window.BF = window.BF || {};
 		html += `
 					<li class="next ${page === pages ? "" : "page"}">
 						${page === pages
-							? `<span>${nextLabel}</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page + 1}" aria-label="${nextLabel}">${nextLabel}</a>`}
+							? `<span>Nästa »</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page + 1}" aria-label="Nästa">Nästa »</a>`}
 					</li>
 				</ul>
 				<span>
@@ -1064,7 +1208,7 @@ window.BF = window.BF || {};
 							 ${locked ? "disabled" : ""}>
 				<span class="bf-prio-icon">${p.icon}</span>
 				<span class="bf-prio-label">${p.label}</span>
-				${locked ? `<span class="bf-prio-locked">(${(window.BF_READUP_I18N && BF_READUP_I18N.locked) || 'locked'})</span>` : ""}
+				${locked ? `<span class="bf-prio-locked">(låst)</span>` : ""}
 			`;
 
 			host.appendChild(label);
