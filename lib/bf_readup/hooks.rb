@@ -15,21 +15,12 @@ module BfReadup
       prefix    = Redmine::Utils.relative_url_root
       heartbeat = Setting.plugin_bf_readup['heartbeat_interval_seconds'].to_i
 
-      # 🔑 Hela pluginets i18n-subträd
       i18n = I18n.t(:bf_readup, default: {}).deep_stringify_keys
 
       tags  = +""
       tags << javascript_tag("window.BF_READUP_ROOT = '#{prefix}/';")
       tags << javascript_tag("window.BF_READUP_HEARTBEAT = #{heartbeat};")
       tags << javascript_tag("window.BF_READUP_I18N = #{i18n.to_json};")
-
-      tags << javascript_include_tag(
-        'bf_readup_core',
-        'bf_readup_updates',
-        'bf_readup_most',
-        'bf_readup_recent',
-        plugin: 'bf_readup'
-      )
 
       tags
     end
@@ -52,6 +43,16 @@ module BfReadup
       context[:controller].instance_variable_set(
         :@bf_readup_selected_columns,
         selected
+      )
+    end
+
+    def view_my_page_contextual(context = {})
+      javascript_include_tag(
+        'bf_readup_core',
+        'bf_readup_updates',
+        'bf_readup_most',
+        'bf_readup_recent',
+        plugin: 'bf_readup'
       )
     end
 
