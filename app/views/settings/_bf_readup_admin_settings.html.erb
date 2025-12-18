@@ -23,27 +23,40 @@ custom_field_matchers =
     <legend><%= l(:'bf_readup.admin.general') %></legend>
 
     <p>
-      <label><%= l(:'bf_readup.admin.heartbeat_interval_seconds') %></label>
-      <input type="number" name="settings[heartbeat_interval_seconds]"
+      <label for="settings_heartbeat_interval_seconds"><%= l(:'bf_readup.admin.heartbeat_interval_seconds') %></label>
+      <input type="number" name="settings[heartbeat_interval_seconds]" id="settings_heartbeat_interval_seconds"
         value="<%= @settings['heartbeat_interval_seconds'] %>" min="1" size="6">
+      <br>
+      <small><%= l(:'bf_readup.admin.heartbeat_hint') %></small>
     </p>
 
     <p>
-      <label><%= l(:'bf_readup.admin.lookback_days') %></label>
-      <input type="number" name="settings[lookback_days]"
+      <label for="settings_lookback_days"><%= l(:'bf_readup.admin.lookback_days') %></label>
+      <input type="number" name="settings[lookback_days]" id="settings_lookback_days"
         value="<%= @settings['lookback_days'] %>" min="1" size="6">
+      <br>
+      <small><%= l(:'bf_readup.admin.lookback_hint') %></small>
     </p>
 		
 		<p>
-			<label><%= l(:'bf_readup.admin.mark_as_read_max_rank') %></label>
+			<label for="settings_mark_as_read_max_rank"><%= l(:'bf_readup.admin.mark_as_read_max_rank') %></label>
 			<input
 				type="number"
 				name="settings[mark_as_read_max_rank]"
+				id="settings_mark_as_read_max_rank"
 				value="<%= @settings['mark_as_read_max_rank'] %>"
 				min="0"
 				size="6">
 			<em><%= l(:'bf_readup.admin.mark_as_read_max_rank_hint') %></em>
 		</p>
+
+    <p>
+      <label for="settings_expose_user_debug_option"><%= l(:'bf_readup.admin.expose_user_debug_option') %></label>
+      <input type="checkbox" name="settings[expose_user_debug_option]" id="settings_expose_user_debug_option"
+        <%= @settings['expose_user_debug_option'] == "on" ? "checked" : "" %>>
+      <br>
+      <small><%= l(:'bf_readup.admin.expose_user_debug_option_hint') %></small>
+    </p>
   </fieldset>
 
   <!-- ====================== -->
@@ -81,6 +94,8 @@ custom_field_matchers =
     </table>
 
     <button type="button" class="icon icon-add" id="add-prio-rule"><%= l(:'bf_readup.admin.add_priority_rule') %></button>
+
+    <p><small><%= l(:'bf_readup.admin.drag_drop_hint') %></small></p>
 
     <input type="hidden" name="settings[prio_levels]" id="prio-rules-json">
   </fieldset>
@@ -122,3 +137,11 @@ custom_field_matchers =
 
 <%= javascript_include_tag 'bf_readup_admin', plugin: 'bf_readup' %>
 <%= stylesheet_link_tag 'bf_readup_admin', plugin: 'bf_readup' %>
+
+<script>
+  window.BF = window.BF || {};
+  BF.locales = BF.locales || {};
+  Object.assign(BF.locales, {
+    confirm_delete: "<%= j l(:'text_are_you_sure') %>"
+  });
+</script>

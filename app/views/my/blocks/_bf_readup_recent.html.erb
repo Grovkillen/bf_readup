@@ -3,13 +3,13 @@
 <div class="contextual">
   <a href="#"
      class="icon-only icon-reload bf-readup-recent-sync"
-     title="Uppdatera"></a>
+     title="<%= l(:'bf_readup.common.sync_title') %>"></a>
 </div>
 
 <div class="bf-readup-recent">
 
   <h3 class="bf-readup-recent-header">
-    <%= l(:'bf_readup.blocks.recent.hearder') %> (<span id="bf-readup-recent-total-count">0</span>)
+   	<%= l(:'bf_readup.blocks.recent.header') %> (<span id="bf-readup-recent-total-count">0</span>)
   </h3>
 
   <p id="bf-readup-recent-empty"
@@ -35,5 +35,30 @@
 
 </div>
 
-<%= javascript_include_tag 'bf_readup_recent', plugin: 'bf_readup' %>
 <%= stylesheet_link_tag  'bf_readup_recent', plugin: 'bf_readup' %>
+
+<script>
+  window.BF = window.BF || {};
+  BF.locales = BF.locales || {};
+  Object.assign(BF.locales, {
+    show_more: "<%= j l(:'bf_readup.common.show_more') %>",
+    show_less: "<%= j l(:'bf_readup.common.show_less') %>",
+    empty: "<%= j l(:'bf_readup.common.empty') %>",
+    sync_title: "<%= j l(:'bf_readup.common.sync_title') %>",
+    just_now: "<%= j l(:'bf_readup.common.just_now') %>",
+    units: {
+      minute: "<%= j l(:'bf_readup.units.minute') %>",
+      hour: "<%= j l(:'bf_readup.units.hour') %>",
+      day: "<%= j l(:'bf_readup.units.day') %>"
+    },
+    columns: {
+      issue: "<%= j l(:'bf_readup.columns.issue') %>",
+      project: "<%= j l(:'bf_readup.columns.project') %>",
+      last_viewed: "<%= j l(:'bf_readup.columns.last_viewed') %>",
+      tracker: "<%= j l(:'bf_readup.columns.tracker') %>",
+      subject: "<%= j l(:'bf_readup.columns.subject') %>"
+    }
+  });
+</script>
+
+<%= javascript_include_tag 'bf_readup_recent', plugin: 'bf_readup' %>

@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   prTable?.addEventListener("click", (e) => {
     if (e.target.classList.contains("pr-del")) {
-      e.target.closest("tr").remove();
+      if (confirm(BF.locales?.confirm_delete || "Are you sure?")) {
+        e.target.closest("tr").remove();
+      }
     }
   });
 
@@ -51,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cfTable?.addEventListener("click", (e) => {
     if (e.target.classList.contains("cf-del")) {
-      e.target.closest("tr").remove();
+      if (confirm(BF.locales?.confirm_delete || "Are you sure?")) {
+        e.target.closest("tr").remove();
+      }
     }
   });
 

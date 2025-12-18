@@ -10,8 +10,13 @@ en:
       mark_as_read: "Mark as read"
       cannot_mark_as_read: "Can't be marked as read"
       just_now: "just now"
+      locked: "(locked)"
       empty: "No issues to display."
       sync_title: "Refresh"
+    units:
+      minute: "min"
+      hour: "h"
+      day: "d"
     columns:
       issue: "Issue"
       project: "Project"
@@ -40,7 +45,6 @@ en:
       cf_rules: "CF rules (Custom Field Matchers)"
       add_priority_rule: "Add priority rule"
       add_cf_rule: "Add CF rule"
-      load_default_priority_rules: "Load default list"
       drag_drop_hint: "Reorder by drag-and-drop. Rank is taken from the list position (top = 1)."
       table:
         rank: "Rank"

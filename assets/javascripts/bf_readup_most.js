@@ -50,16 +50,17 @@ window.BF = window.BF || {};
 
       const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-      if (diffSec < 60) return "nyss";
+      const locales = BF.locales || {};
+      if (diffSec < 60) return locales.just_now || "just now";
 
       const min = Math.floor(diffSec / 60);
-      if (min < 60) return `${min} min`;
+      if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
 
       const h = Math.floor(min / 60);
-      if (h < 24) return `${h} h`;
+      if (h < 24) return `${h} ${locales.units?.hour || "h"}`;
 
       const d = Math.floor(h / 24);
-      return `${d} d`;
+      return `${d} ${locales.units?.day || "d"}`;
     };
   }
 
@@ -221,13 +222,14 @@ window.BF = window.BF || {};
 
 		// Rendera header oavsett tbody
 		if (thead) {
+			const locales = BF.locales || {};
 			thead.innerHTML = `
 				<tr>
 					<th class="id">#</th>
-					<th class="subject">Ärende</th>
-					<th class="project">Projekt</th>
-					<th class="time_spent">Tid</th>
-					<th class="last_viewed">Senast visad</th>
+					<th class="subject">${locales.columns?.issue || "Issue"}</th>
+					<th class="project">${locales.columns?.project || "Project"}</th>
+					<th class="time_spent">${locales.columns?.time_spent || "Time spent"}</th>
+					<th class="last_viewed">${locales.columns?.last_viewed || "Last viewed"}</th>
 				</tr>
 			`;
 		}
@@ -287,19 +289,20 @@ window.BF = window.BF || {};
 		const label = expandBtn.querySelector(".label");
 		const icon  = expandBtn.querySelector(".icon");
 
+		const locales = BF.locales || {};
 		if (BF.most.state.expanded) {
-			if (label) label.textContent = "Visa färre";
-			expandBtn.title = "Visa färre ärenden";
-			expandBtn.setAttribute("aria-label", "Visa färre ärenden");
+			if (label) label.textContent = locales.show_less || "Show less";
+			expandBtn.title = locales.show_less || "Show less";
+			expandBtn.setAttribute("aria-label", locales.show_less || "Show less");
 
 			if (icon) {
 				icon.classList.remove("icon-zoom-in");
 				icon.classList.add("icon-zoom-out");
 			}
 		} else {
-			if (label) label.textContent = "Visa fler";
-			expandBtn.title = "Visa fler ärenden";
-			expandBtn.setAttribute("aria-label", "Visa fler ärenden");
+			if (label) label.textContent = locales.show_more || "Show more";
+			expandBtn.title = locales.show_more || "Show more";
+			expandBtn.setAttribute("aria-label", locales.show_more || "Show more");
 
 			if (icon) {
 				icon.classList.remove("icon-zoom-out");
@@ -323,14 +326,15 @@ window.BF = window.BF || {};
     const startItem = (page - 1) * BF.most.UI.PER_PAGE + 1;
     const endItem   = Math.min(page * BF.most.UI.PER_PAGE, total);
 
+    const locales = BF.locales || {};
     let html = `
       <span class="pagination">
         <ul class="pages">
           <li class="previous ${page === 1 ? "" : "page"}">
             ${
               page === 1
-                ? `<span>« Föregående</span>`
-                : `<a href="#" class="bf-most-page-link" data-page="${page - 1}">« Föregående</a>`
+                ? `<span>${locales.previous_label || "« Previous"}</span>`
+                : `<a href="#" class="bf-most-page-link" data-page="${page - 1}">${locales.previous_label || "« Previous"}</a>`
             }
           </li>
     `;
@@ -345,8 +349,8 @@ window.BF = window.BF || {};
           <li class="next ${page === pages ? "" : "page"}">
             ${
               page === pages
-                ? `<span>Nästa »</span>`
-                : `<a href="#" class="bf-most-page-link" data-page="${page + 1}">Nästa »</a>`
+                ? `<span>${locales.next_label || "Next »"}</span>`
+                : `<a href="#" class="bf-most-page-link" data-page="${page + 1}">${locales.next_label || "Next »"}</a>`
             }
           </li>
         </ul>

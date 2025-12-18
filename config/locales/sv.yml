@@ -10,8 +10,13 @@ sv:
       mark_as_read: "Markera som läst"
       cannot_mark_as_read: "Kan inte markeras som läst"
       just_now: "nyss"
+      locked: "(låst)"
       empty: "Inga ärenden att visa."
       sync_title: "Uppdatera"
+    units:
+      minute: "min"
+      hour: "h"
+      day: "d"
     columns:
       issue: "Ärende"
       project: "Projekt"
@@ -40,7 +45,6 @@ sv:
       cf_rules: "CF-regler (Custom Field Matchers)"
       add_priority_rule: "Lägg till prioritetsregel"
       add_cf_rule: "Lägg till CF-regel"
-      load_default_priority_rules: "Ladda standardlista"
       drag_drop_hint: "Ordna genom dra-och-släpp. Rank tas från listans position (överst = 1)."
       table:
         rank: "Rank"

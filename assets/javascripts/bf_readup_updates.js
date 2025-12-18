@@ -431,7 +431,7 @@ window.BF = window.BF || {};
 			if (btn) {
 				btn.classList.add("is-disabled");
 				btn.setAttribute("aria-disabled", "true");
-				btn.title = "Markera minst ett ärende för att använda funktionen";
+				btn.title = BF.locales?.mark_selected_require_selection || "Select at least one issue to use this action";
 			}
 			return;
 		}
@@ -449,8 +449,8 @@ window.BF = window.BF || {};
 		btn.classList.toggle("is-disabled", !enabled);
 		btn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		btn.title = enabled
-			? "Markera valda som lästa"
-			: "Markera minst ett ärende för att använda funktionen";
+			? (BF.locales?.mark_selected_read || "Mark selected as read")
+			: (BF.locales?.mark_selected_require_selection || "Select at least one issue to use this action");
 	};
 
 	BF.updateMasterCheckboxState = function () {
@@ -619,7 +619,7 @@ window.BF = window.BF || {};
 		
 		const btn = document.createElement("a");
 		btn.href = "javascript:void(0)";
-		btn.title = "Markera som läst";
+		btn.title = BF.locales?.mark_as_read || "Mark as read";
 		btn.className = "bf-mark-read-btn";
 
 		Object.assign(btn.style, {
@@ -782,16 +782,17 @@ window.BF = window.BF || {};
 
 		const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-		if (diffSec < 60) return "nyss";
+		const locales = BF.locales || {};
+		if (diffSec < 60) return locales.just_now || "just now";
 
 		const min = Math.floor(diffSec / 60);
-		if (min < 60) return `${min} min`;
+		if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
 
 		const h = Math.floor(min / 60);
-		if (h < 24) return `${h} h`;
+		if (h < 24) return `${h} ${locales.units?.hour || "h"}`;
 
 		const d = Math.floor(h / 24);
-		return `${d} d`;
+		return `${d} ${locales.units?.day || "d"}`;
 	};
 
 	BF.getTotalRows = function () {
@@ -935,11 +936,11 @@ window.BF = window.BF || {};
 			expand.setAttribute("aria-expanded", expanded ? "true" : "false");
 
 			if (expanded) {
-				label.textContent = "Visa färre";
+				label.textContent = BF.locales?.show_less || "Show less";
 				icon.classList.remove("icon-zoom-in");
 				icon.classList.add("icon-zoom-out");
 			} else {
-				label.textContent = "Visa fler";
+				label.textContent = BF.locales?.show_more || "Show more";
 				icon.classList.remove("icon-zoom-out");
 				icon.classList.add("icon-zoom-in");
 			}
@@ -983,8 +984,8 @@ window.BF = window.BF || {};
 				<ul class="pages">
 					<li class="previous ${page === 1 ? "" : "page"}">
 						${page === 1
-							? `<span>« Föregående</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page - 1}" aria-label="Föregående">« Föregående</a>`}
+							? `<span>${BF.locales?.previous_label || "« Previous"}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page - 1}">${BF.locales?.previous_label || "« Previous"}</a>`}
 					</li>
 		`;
 
@@ -999,8 +1000,8 @@ window.BF = window.BF || {};
 		html += `
 					<li class="next ${page === pages ? "" : "page"}">
 						${page === pages
-							? `<span>Nästa »</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page + 1}" aria-label="Nästa">Nästa »</a>`}
+							? `<span>${BF.locales?.next_label || "Next »"}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page + 1}">${BF.locales?.next_label || "Next »"}</a>`}
 					</li>
 				</ul>
 				<span>
@@ -1056,7 +1057,7 @@ window.BF = window.BF || {};
 							 ${locked ? "disabled" : ""}>
 				<span class="bf-prio-icon">${p.icon}</span>
 				<span class="bf-prio-label">${p.label}</span>
-				${locked ? `<span class="bf-prio-locked">(låst)</span>` : ""}
+ 			${locked ? `<span class="bf-prio-locked">${BF.locales?.locked || "locked"}</span>` : ""}
 			`;
 
 			host.appendChild(label);
@@ -1228,7 +1229,7 @@ window.BF = window.BF || {};
 
     cols.forEach(col => {
       const key = col.key;
-      const label = col.label || "";
+      const label = BF.locales?.columns?.[key] || col.label || "";
       const thClass = key === "prio" ? "bf-prio bf-col-prio" : key;
 
       thHtml += `
@@ -1278,7 +1279,7 @@ window.BF = window.BF || {};
 				<td class="checkbox">
 				<input type="checkbox"
 							 value="${row.id}"
-							 ${disabled ? "disabled title='Kan inte markeras som läst'" : ""}>
+							 ${disabled ? `disabled title='${BF.locales?.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
 
 				</td>
 			`;
