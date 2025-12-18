@@ -40,3 +40,10 @@ Redmine::Plugin.register :bf_readup do
     partial: "settings/bf_readup_admin_settings"
   )
 end
+
+Rails.application.config.assets.precompile += %w[
+  bf_readup_core.js
+  bf_readup_updates.js
+  bf_readup_most.js
+  bf_readup_recent.js
+]

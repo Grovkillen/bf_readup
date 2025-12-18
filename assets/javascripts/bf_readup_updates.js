@@ -1847,7 +1847,7 @@ ${JSON.stringify(row.debug, null, 2)}
 			<td class="checkbox">
 			<input type="checkbox"
 						 value="${row.id}"
-						 ${disabled ? "disabled title='Kan inte markeras som läst'" : ""}>
+						 ${disabled ? `disabled title='${BF.locales?.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
 			</td>
 		`;
 

@@ -12,21 +12,26 @@ module BfReadup
     # 2. Global HEAD inject: Root path + heartbeat interval
     # ------------------------------------------------------------
     def view_layouts_base_html_head(context = {})
-      prefix = Redmine::Utils.relative_url_root
+      prefix    = Redmine::Utils.relative_url_root
       heartbeat = Setting.plugin_bf_readup['heartbeat_interval_seconds'].to_i
 
+      # 🔑 Hela pluginets i18n-subträd
+      i18n = I18n.t(:bf_readup, default: {}).deep_stringify_keys
+
       tags  = +""
-      tags << "<script>window.BF_READUP_ROOT = '#{prefix}/';</script>"
-      tags << "<script>window.BF_READUP_HEARTBEAT = #{heartbeat};</script>"
+      tags << javascript_tag("window.BF_READUP_ROOT = '#{prefix}/';")
+      tags << javascript_tag("window.BF_READUP_HEARTBEAT = #{heartbeat};")
+      tags << javascript_tag("window.BF_READUP_I18N = #{i18n.to_json};")
 
-      tags.html_safe
-    end
+      tags << javascript_include_tag(
+        'bf_readup_core',
+        'bf_readup_updates',
+        'bf_readup_most',
+        'bf_readup_recent',
+        plugin: 'bf_readup'
+      )
 
-    # ------------------------------------------------------------
-    # 3. MyPage: inject widget JS
-    # ------------------------------------------------------------
-    def view_my_page_contextual(context = {})
-      javascript_include_tag('bf_readup_updates', plugin: 'bf_readup')
+      tags
     end
 
     # ------------------------------------------------------------

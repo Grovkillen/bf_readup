@@ -42,29 +42,4 @@
 </div>
 
 <%= stylesheet_link_tag  'bf_readup_most', plugin: 'bf_readup' %>
-
-<script>
-  window.BF = window.BF || {};
-  BF.locales = BF.locales || {};
-  Object.assign(BF.locales, {
-    show_more: "<%= j l(:'bf_readup.common.show_more') %>",
-    show_less: "<%= j l(:'bf_readup.common.show_less') %>",
-    empty: "<%= j l(:'bf_readup.common.empty') %>",
-    sync_title: "<%= j l(:'bf_readup.common.sync_title') %>",
-    just_now: "<%= j l(:'bf_readup.common.just_now') %>",
-    units: {
-      minute: "<%= j l(:'bf_readup.units.minute') %>",
-      hour: "<%= j l(:'bf_readup.units.hour') %>",
-      day: "<%= j l(:'bf_readup.units.day') %>"
-    },
-    columns: {
-      issue: "<%= j l(:'bf_readup.columns.issue') %>",
-      project: "<%= j l(:'bf_readup.columns.project') %>",
-      tracker: "<%= j l(:'bf_readup.columns.tracker') %>",
-      subject: "<%= j l(:'bf_readup.columns.subject') %>",
-      new_count: "<%= j l(:'bf_readup.columns.new_count') %>"
-    }
-  });
-</script>
-
 <%= javascript_include_tag 'bf_readup_most', plugin: 'bf_readup' %>

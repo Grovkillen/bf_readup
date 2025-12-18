@@ -54,42 +54,4 @@
 </div>
 
 <%= stylesheet_link_tag 'bf_readup_updates', plugin: 'bf_readup' %>
-
-<script>
-  window.BF = window.BF || {};
-  BF.locales = BF.locales || {};
-  Object.assign(BF.locales, {
-    show_more: "<%= j l(:'bf_readup.common.show_more') %>",
-    show_less: "<%= j l(:'bf_readup.common.show_less') %>",
-    next_label: "<%= j l(:'bf_readup.common.next_label') %>",
-    previous_label: "<%= j l(:'bf_readup.common.previous_label') %>",
-    mark_selected_require_selection: "<%= j l(:'bf_readup.common.mark_selected_require_selection') %>",
-    mark_selected_read: "<%= j l(:'bf_readup.common.mark_selected_read') %>",
-    mark_as_read: "<%= j l(:'bf_readup.common.mark_as_read') %>",
-    cannot_mark_as_read: "<%= j l(:'bf_readup.common.cannot_mark_as_read') %>",
-    just_now: "<%= j l(:'bf_readup.common.just_now') %>",
-    sync_title: "<%= j l(:'bf_readup.blocks.updates.sync_title') %>",
-    locked: "<%= j l(:'bf_readup.common.locked', default: '(låst)') %>",
-    units: {
-      minute: "<%= j l(:'bf_readup.units.minute') %>",
-      hour: "<%= j l(:'bf_readup.units.hour') %>",
-      day: "<%= j l(:'bf_readup.units.day') %>"
-    },
-    columns: {
-      issue: "<%= j l(:'bf_readup.columns.issue') %>",
-      project: "<%= j l(:'bf_readup.columns.project') %>",
-      status: "<%= j l(:'bf_readup.columns.status') %>",
-      last_updated: "<%= j l(:'bf_readup.columns.last_updated') %>",
-      last_viewed: "<%= j l(:'bf_readup.columns.last_viewed') %>",
-      tracker: "<%= j l(:'bf_readup.columns.tracker') %>",
-      subject: "<%= j l(:'bf_readup.columns.subject') %>",
-      read_ago: "<%= j l(:'bf_readup.columns.read_ago') %>",
-      activity_ago: "<%= j l(:'bf_readup.columns.activity_ago') %>",
-      new_count: "<%= j l(:'bf_readup.columns.new_count') %>",
-      type: "<%= j l(:'bf_readup.columns.type') %>",
-      time_spent: "<%= j l(:'bf_readup.columns.time_spent') %>"
-    }
-  });
-</script>
-
 <%= javascript_include_tag 'bf_readup_updates', plugin: 'bf_readup' %>

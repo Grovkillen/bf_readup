@@ -41,28 +41,27 @@ window.BF = window.BF || {};
   // -------------------------------------------------------------------------
   // HELPERS
   // -------------------------------------------------------------------------
-  if (!BF.humanTimeAgo) {
-    BF.humanTimeAgo = function (iso) {
-      if (!iso) return "—";
+    if (!BF.humanTimeAgo) {
+        BF.humanTimeAgo = function (iso) {
+            if (!iso) return "—";
 
-      const ts = Date.parse(iso);
-      if (isNaN(ts)) return "—";
+            const ts = Date.parse(iso);
+            if (isNaN(ts)) return "—";
 
-      const diffSec = Math.floor((Date.now() - ts) / 1000);
+            const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-      const locales = BF.locales || {};
-      if (diffSec < 60) return locales.just_now || "just now";
+            if (diffSec < 60) return BF.t("just_now", "—");
 
-      const min = Math.floor(diffSec / 60);
-      if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
+            const min = Math.floor(diffSec / 60);
+            if (min < 60) return `${min} ${BF.t("units.minute", "min")}`;
 
-      const h = Math.floor(min / 60);
-      if (h < 24) return `${h} ${locales.units?.hour || "h"}`;
+            const h = Math.floor(min / 60);
+            if (h < 24) return `${h} ${BF.t("units.hour", "h")}`;
 
-      const d = Math.floor(h / 24);
-      return `${d} ${locales.units?.day || "d"}`;
-    };
-  }
+            const d = Math.floor(h / 24);
+            return `${d} ${BF.t("units.day", "d")}`;
+        };
+    }
 
 	function loadCachedData() {
 		try {
@@ -211,17 +210,16 @@ window.BF = window.BF || {};
 		const thead = document.getElementById(`${PREFIX}-thead`);
 
 		// Rendera header så fort thead finns
-		if (thead) {
-			const locales = BF.locales || {};
-			thead.innerHTML = `
-				<tr>
-					<th class="id">#</th>
-					<th class="subject">${locales.columns?.subject || "Subject"}</th>
-					<th class="project">${locales.columns?.project || "Project"}</th>
-					<th class="last_read">${locales.columns?.last_viewed || "Last viewed"}</th>
-				</tr>
-			`;
-		}
+        if (thead) {
+            thead.innerHTML = `
+            <tr>
+              <th class="id">#</th>
+              <th class="subject">${BF.t("columns.subject", "Subject")}</th>
+              <th class="project">${BF.t("columns.project", "Project")}</th>
+              <th class="last_read">${BF.t("columns.last_viewed", "Last viewed")}</th>
+            </tr>
+          `;
+        }
 
 		// Om tbody inte finns ännu → vänta
 		if (!tbody) return;
@@ -274,29 +272,21 @@ window.BF = window.BF || {};
       BF.recent.state.expanded ? "true" : "false"
     );
 
-		const label = expandBtn.querySelector(".label");
-		const icon  = expandBtn.querySelector(".icon");
+    const label = expandBtn.querySelector(".label");
+    const icon  = expandBtn.querySelector(".icon");
 
-		const locales = BF.locales || {};
-		if (BF.recent.state.expanded) {
-			if (label) label.textContent = locales.show_less || "Show less";
-			expandBtn.title = locales.show_less || "Show less";
-			expandBtn.setAttribute("aria-label", locales.show_less || "Show less");
+    const labelText = BF.recent.state.expanded
+      ? BF.t("show_less", "Show less")
+      : BF.t("show_more", "Show more");
 
-			if (icon) {
-				icon.classList.remove("icon-zoom-in");
-				icon.classList.add("icon-zoom-out");
-			}
-		} else {
-			if (label) label.textContent = locales.show_more || "Show more";
-			expandBtn.title = locales.show_more || "Show more";
-			expandBtn.setAttribute("aria-label", locales.show_more || "Show more");
+    if (label) label.textContent = labelText;
+    expandBtn.title = labelText;
+    expandBtn.setAttribute("aria-label", labelText);
 
-			if (icon) {
-				icon.classList.remove("icon-zoom-out");
-				icon.classList.add("icon-zoom-in");
-			}
-		}
+    if (icon) {
+      icon.classList.toggle("icon-zoom-in", !BF.recent.state.expanded);
+      icon.classList.toggle("icon-zoom-out", BF.recent.state.expanded);
+    }
 
     // Pagination
     if (!BF.recent.state.expanded || total <= BF.recent.UI.PER_PAGE) {
@@ -313,16 +303,17 @@ window.BF = window.BF || {};
     const pages = getTotalPages();
     const startItem = (page - 1) * BF.recent.UI.PER_PAGE + 1;
     const endItem   = Math.min(page * BF.recent.UI.PER_PAGE, total);
+    const prevLabel = BF.t("previous_label", "« Previous");
+    const nextLabel = BF.t("next_label", "Next »");
 
-    const locales = BF.locales || {};
     let html = `
       <span class="pagination">
         <ul class="pages">
           <li class="previous ${page === 1 ? "" : "page"}">
             ${
-              page === 1
-                ? `<span>${locales.previous_label || "« Previous"}</span>`
-                : `<a href="#" class="bf-recent-page-link" data-page="${page - 1}">${locales.previous_label || "« Previous"}</a>`
+                page === 1
+                    ? `<span>${prevLabel}</span>`
+                    : `<a href="#" class="bf-recent-page-link" data-page="${page - 1}">${prevLabel}</a>`
             }
           </li>
     `;
@@ -336,9 +327,9 @@ window.BF = window.BF || {};
     html += `
           <li class="next ${page === pages ? "" : "page"}">
             ${
-              page === pages
-                ? `<span>${locales.next_label || "Next »"}</span>`
-                : `<a href="#" class="bf-recent-page-link" data-page="${page + 1}">${locales.next_label || "Next »"}</a>`
+                page === pages
+                    ? `<span>${nextLabel}</span>`
+                    : `<a href="#" class="bf-recent-page-link" data-page="${page + 1}">${nextLabel}</a>`
             }
           </li>
         </ul>

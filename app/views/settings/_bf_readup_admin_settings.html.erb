@@ -137,11 +137,3 @@ custom_field_matchers =
 
 <%= javascript_include_tag 'bf_readup_admin', plugin: 'bf_readup' %>
 <%= stylesheet_link_tag 'bf_readup_admin', plugin: 'bf_readup' %>
-
-<script>
-  window.BF = window.BF || {};
-  BF.locales = BF.locales || {};
-  Object.assign(BF.locales, {
-    confirm_delete: "<%= j l(:'text_are_you_sure') %>"
-  });
-</script>

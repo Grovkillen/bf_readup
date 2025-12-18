@@ -140,40 +140,52 @@ BF Readup consists of three main parts:
 
 ---
 
-## Database dependencies (IMPORTANT)
+## Database dependency (MANDATORY)
 
-⚠️ **The current codebase uses explicit PostgreSQL features.**
+⚠️ **This plugin requires PostgreSQL and will not support other database engines.**
 
-Specifically:
-- `extra_data` is stored as **jsonb**
-- Indexing is done using **GIN indexes**
-- Certain “mark as read” operations are optimized for PostgreSQL
+The requirement is **intentional and architectural**, not incidental.
 
-➡️ This means the plugin is **not fully compatible with other databases** (such as MySQL) at this time.
+### Rationale
 
-### Intended handling
-The intention is to:
-- internally detect the active database engine
-- automatically **disable PostgreSQL-specific optimizations** when unavailable
-- allow the plugin to run in a degraded but functional mode where reasonable
+We explicitly depend on PostgreSQL in order to build **dynamic and evolvable data models** for how issues are read, revisited, and analyzed over time.
 
-This is **not yet implemented**, but it is an explicit design intention.
+Concretely:
 
----
+- All **analytical, behavioral, and extensible data** is stored in  
+  **`extra_data` (`jsonb`)**
+- This enables:
+  - schema-less evolution of analytics
+  - forward-compatible feature development
+  - per-issue, per-journal, per-user behavioral modeling
+- Querying and indexing rely on **PostgreSQL JSONB features**, including **GIN indexes**
 
-## Language disclaimer (IMPORTANT)
+### Data separation principle
 
-⚠️ **The plugin UI is currently hard-coded in Swedish.**
+We deliberately separate data concerns.
 
-At this stage:
-- all labels, texts, and messages are written in Swedish
-- no locale switching is available
-- this is a deliberate choice based on internal usage
+**Classical relational columns are used only for:**
+- last viewed timestamp
+- user reference
+- issue and journal references
+- heartbeat and session tracking
+- fast, deterministic lookups (who last viewed what, and when)
 
-### Planned work
-- migrate all UI strings to `config/locales`
-- enable proper internationalization
-- keep Swedish as a first-class language
+**All analysis and derived data lives in `jsonb`:**
+- read and revisit patterns
+- change sensitivity
+- prioritization signals
+- scoring and ranking models
+- future analytical extensions
+
+This keeps the relational schema **stable and minimal**, while allowing the analytical model to evolve **without schema churn**.
+
+### Consequence
+
+➡️ The plugin is **PostgreSQL-only by design**.  
+Support for MySQL or other databases is **explicitly out of scope**.
+
+No degraded or fallback compatibility mode is planned, as such a mode would undermine the core data model and long-term design goals.
 
 ---
 
