@@ -1,0 +1,220 @@
+/* --------------------------------------------------
+   Header of table
+-------------------------------------------------- */
+th.bf-col-prio,
+td.bf-col-prio {
+	width: 11px !important;
+	max-width: 11px !important;
+	padding-left: 2px !important;
+	padding-right: 2px !important;
+	text-align: center;
+	white-space: nowrap;
+	padding: 0 2px;
+	cursor: help;
+}
+
+/* Dölj rubriktexten i prio-kolumnen */
+th.bf-col-prio span {
+	display: none;
+}
+
+td.new_count {
+	cursor: help;
+}
+
+.bf-prio-setting input[type="checkbox"]:disabled {
+  background-color: #de8c8c;
+  border-color: #d77777;
+}
+
+#bf-readup-prio-list {
+  display: grid;
+
+  /* Nyckeln: så många kolumner som får plats */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(max-content, 1fr)
+  );
+
+  column-gap: 1.25rem;
+  row-gap: 0.4rem;
+
+  /* Förhindrar att listan blir för bred i sidopanel */
+  max-width: 100%;
+}
+
+.bf-prio-setting {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  gap: 0.4rem;
+
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.bf-prio-icon {
+  width: 1.4em;
+  text-align: center;
+}
+
+.bf-prio-locked {
+  color: #999;
+  font-size: 0.85em;
+}
+
+/* --------------------------------------------------
+   Update synk icon when loading
+-------------------------------------------------- */
+
+.bf-readup-updates-sync.is-loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.bf-readup-updates-sync.is-loading::before {
+  animation: bf-spin 1s linear infinite;
+}
+
+@keyframes bf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------
+   Bulk button if disabled
+-------------------------------------------------- */
+
+.bf-mark-selected-read.is-disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.bf-readup-locked input[type="checkbox"] {
+    background-color: #d6d1d1;
+}
+
+/* --------------------------------------------------
+   Pagnation and max/min if more than 10
+-------------------------------------------------- */
+
+.bf-readup-updates-footer {
+  margin-top: 0.5em;
+  display: none;
+}
+
+.bf-readup-updates-footer.is-visible {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.bf-readup-updates-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bf-readup-updates-toggle .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* --------------------------------------------------
+   Dynamic row creation and update animations
+-------------------------------------------------- */
+
+.bf-row-enter {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.bf-row-enter-active {
+  opacity: 1;
+  transform: none;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.bf-row-exit {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* --------------------------------------------------
+.bf-row-updated {
+  background-color: rgba(200, 235, 255, 0.6);
+  transition: background-color 1.4s ease;
+}
+-------------------------------------------------- */
+
+td.bf-cell-updated {
+  background-color: rgba(255, 220, 120, 0.4);
+  transition: background-color 1.2s ease;
+}
+
+/* --------------------------------------------------
+   Pending remove (dimmad innan borttag)
+-------------------------------------------------- */
+tr.bf-row-pending-remove {
+  opacity: 0.25;
+  transition: opacity 400ms ease;
+}
+
+/* --------------------------------------------------
+   Row collapse (height -> 0)
+-------------------------------------------------- */
+tr.bf-row-collapse {
+  height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border: 0 !important;
+  overflow: hidden;
+  transition: height 300ms ease, padding 300ms ease;
+}
+
+/* --------------------------------------------------
+   Row move direction highlight
+-------------------------------------------------- */
+tr.bf-row-moved-up {
+  background-color: rgba(120, 170, 255, 0.25);
+}
+
+tr.bf-row-moved-down {
+  background-color: rgba(255, 210, 120, 0.35);
+}
+
+
+/* --------------------------------------------------
+   Debug rows (collapsed by default)
+-------------------------------------------------- */
+
+tr.bf-debug-row {
+  display: none;
+}
+
+tr.bf-debug-row.is-open {
+  display: table-row;
+}
+
+.bf-debug-json {
+  white-space: pre-wrap;
+  background: #111;
+  color: #5f5;
+  padding: 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.bf-debug-toggle {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.bf-debug-toggle:hover {
+  opacity: 1;
+}

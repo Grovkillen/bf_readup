@@ -1,0 +1,77 @@
+sv:
+  bf_readup:
+    common:
+      show_more: "Visa fler"
+      show_less: "Visa färre"
+      next_label: "Nästa »"
+      previous_label: "« Föregående"
+      mark_selected_require_selection: "Markera minst ett ärende för att använda funktionen"
+      mark_selected_read: "Markera valda som lästa"
+      mark_as_read: "Markera som läst"
+      cannot_mark_as_read: "Kan inte markeras som läst"
+      just_now: "nyss"
+      empty: "Inga ärenden att visa."
+      sync_title: "Uppdatera"
+    columns:
+      issue: "Ärende"
+      project: "Projekt"
+      status: "Status"
+      last_updated: "Senast ändrad"
+      last_viewed: "Senast visad"
+      tracker: "Ärendetyp"
+      subject: "Ämne"
+      read_ago: "Sedan jag läste"
+      activity_ago: "Senaste aktivitet"
+      new_count: "Nytt"
+      type: "Typ"
+      time_spent: "Tid"
+    admin:
+      title: "BF Readup – Inställningar"
+      general: "Allmänt"
+      heartbeat_interval_seconds: "Heartbeat-intervall (sekunder):"
+      heartbeat_hint: "Rekommenderat ≥ 10s (min 3s). För täta hjärtslag ökar belastningen."
+      lookback_days: "Lookback (dagar):"
+      lookback_hint: "Kortare lookback undviker tunga hämtningar efter inaktivitet. Bästa praxis är att hålla sig ajour med listan."
+      mark_as_read_max_rank: "Max rank (prio) för \"Markera som läst\":"
+      mark_as_read_max_rank_hint: "0 = ingen begränsning"
+      expose_user_debug_option: "Visa 'Debug'-kryssruta i användarens widgetinställningar (Uppdateringar)"
+      expose_user_debug_option_hint: "Om ej markerad kan användare inte aktivera debug-läge från sina widgetinställningar."
+      priority_rules: "Prioritetsregler"
+      cf_rules: "CF-regler (Custom Field Matchers)"
+      add_priority_rule: "Lägg till prioritetsregel"
+      add_cf_rule: "Lägg till CF-regel"
+      load_default_priority_rules: "Ladda standardlista"
+      drag_drop_hint: "Ordna genom dra-och-släpp. Rank tas från listans position (överst = 1)."
+      table:
+        rank: "Rank"
+        rank_hint: "Rank beräknas från radens ordning; ingen manuell redigering behövs."
+        icon: "Ikon"
+        label: "Etikett"
+        key: "Nyckel"
+        method: "Metod"
+        active: "Aktiv"
+        delete: "Ta bort"
+        cf_id: "CF-ID"
+        pattern: "Mönster"
+        priority_key: "Prioritetsnyckel"
+
+    blocks:
+      updates:
+        bulk_mark_read_title: "Markera minst ett ärende för att använda funktionen"
+        sync_title: "Synka uppdateringar"
+        settings_title: "Inställningar"
+        header: "Uppdateringar sedan du senast läste"
+        empty: "Inga olästa ärenden att visa."
+      recent:
+        header: "Senast besökta ärenden"
+      most:
+        header: "Mest lästa ärenden just nu"
+
+    updates_settings:
+      legend_priorities: "Visa prioriteringar"
+      policy_hint: "Vissa prioriteringar kan inte döljas enligt systempolicy."
+      hide_closed: "Göm stängda ärenden"
+      debug_enable: "Aktivera debug-läge (lokalt)"
+      debug_hint: "Debug-läge visar rådata, filterresultat och skickar debug: true till backend. Endast synligt för dig via LocalStorage."
+
+    plugin_description: "Spårning av lästa och olästa ändringar i ärenden"

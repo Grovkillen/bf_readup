@@ -1,0 +1,77 @@
+en:
+  bf_readup:
+    common:
+      show_more: "Show more"
+      show_less: "Show less"
+      next_label: "Next »"
+      previous_label: "« Previous"
+      mark_selected_require_selection: "Select at least one issue to use this action"
+      mark_selected_read: "Mark selected as read"
+      mark_as_read: "Mark as read"
+      cannot_mark_as_read: "Can't be marked as read"
+      just_now: "just now"
+      empty: "No issues to display."
+      sync_title: "Refresh"
+    columns:
+      issue: "Issue"
+      project: "Project"
+      status: "Status"
+      last_updated: "Last updated"
+      last_viewed: "Last viewed"
+      tracker: "Tracker"
+      subject: "Subject"
+      read_ago: "Since I read"
+      activity_ago: "Latest activity"
+      new_count: "New"
+      type: "Type"
+      time_spent: "Time"
+    admin:
+      title: "BF Readup – Settings"
+      general: "General"
+      heartbeat_interval_seconds: "Heartbeat interval (seconds):"
+      heartbeat_hint: "Recommended ≥ 10s (min 3s). Too frequent heartbeats increase load."
+      lookback_days: "Lookback (days):"
+      lookback_hint: "Shorter lookback avoids heavy fetches after inactivity. Keeping up with the list is best practice."
+      mark_as_read_max_rank: "Max rank (priority) for \"Mark as read\":"
+      mark_as_read_max_rank_hint: "0 = no limit"
+      expose_user_debug_option: "Show 'Debug' checkbox in user widget settings (Updates)"
+      expose_user_debug_option_hint: "If unchecked, users cannot enable the debug mode from their widget settings."
+      priority_rules: "Priority rules"
+      cf_rules: "CF rules (Custom Field Matchers)"
+      add_priority_rule: "Add priority rule"
+      add_cf_rule: "Add CF rule"
+      load_default_priority_rules: "Load default list"
+      drag_drop_hint: "Reorder by drag-and-drop. Rank is taken from the list position (top = 1)."
+      table:
+        rank: "Rank"
+        rank_hint: "Rank is inferred from row order; no manual editing needed."
+        icon: "Icon"
+        label: "Label"
+        key: "Key"
+        method: "Method"
+        active: "Active"
+        delete: "Delete"
+        cf_id: "CF ID"
+        pattern: "Pattern"
+        priority_key: "Priority key"
+
+    blocks:
+      updates:
+        bulk_mark_read_title: "Select at least one issue to use this action"
+        sync_title: "Sync updates"
+        settings_title: "Settings"
+        header: "Updates since you last read"
+        empty: "No unread issues to display."
+      recent:
+        header: "Recently visited issues"
+      most:
+        header: "Most read issues right now"
+
+    updates_settings:
+      legend_priorities: "Show priorities"
+      policy_hint: "Some priorities cannot be hidden due to system policy."
+      hide_closed: "Hide closed issues"
+      debug_enable: "Enable debug mode (local)"
+      debug_hint: "Debug mode shows raw data, filter results and sends debug: true to backend. Only visible to you via LocalStorage."
+
+    plugin_description: "Tracking of read and unread changes in issues"
