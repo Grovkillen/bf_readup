@@ -50,16 +50,17 @@ window.BF = window.BF || {};
 
             const diffSec = Math.floor((Date.now() - ts) / 1000);
 
-            if (diffSec < 60) return BF.t("just_now", "—");
+            const locales = BF.locales || {};
+            if (diffSec < 60) return locales.common.just_now || "just now";
 
             const min = Math.floor(diffSec / 60);
-            if (min < 60) return `${min} ${BF.t("units.minute", "min")}`;
+            if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
 
             const h = Math.floor(min / 60);
-            if (h < 24) return `${h} ${BF.t("units.hour", "h")}`;
+            if (h < 24) return `${h} ${locales.units?.hour || "h"}`;
 
             const d = Math.floor(h / 24);
-            return `${d} ${BF.t("units.day", "d")}`;
+            return `${d} ${locales.units?.day || "d"}`;
         };
     }
 

@@ -783,7 +783,7 @@ window.BF = window.BF || {};
 		const diffSec = Math.floor((Date.now() - ts) / 1000);
 
 		const locales = BF.locales || {};
-		if (diffSec < 60) return locales.just_now || "just now";
+		if (diffSec < 60) return locales.common.just_now || "just now";
 
 		const min = Math.floor(diffSec / 60);
 		if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
