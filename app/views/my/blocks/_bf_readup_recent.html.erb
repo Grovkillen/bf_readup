@@ -9,13 +9,13 @@
 <div class="bf-readup-recent">
 
   <h3 class="bf-readup-recent-header">
-    Senast besökta ärenden (<span id="bf-readup-recent-total-count">0</span>)
+    <%= l(:'bf_readup.blocks.recent.hearder') %> (<span id="bf-readup-recent-total-count">0</span>)
   </h3>
 
   <p id="bf-readup-recent-empty"
      class="nodata"
      style="display:none; margin:1em 0;">
-    Inga ärenden att visa.
+    <%= l(:'bf_readup.common.empty') %>
   </p>
 
   <table id="bf-readup-recent-table" class="list issues">
@@ -27,7 +27,7 @@
     <div class="bf-readup-recent-footer-inner">
       <button id="bf-readup-recent-expand" class="bf-readup-recent-expand">
         <span class="icon icon-zoom-in"></span>
-        <span class="label">Visa fler</span>
+        <span class="label"><%= l(:'bf_readup.common.show_more') %></span>
       </button>
       <div id="bf-readup-recent-pagination"></div>
     </div>

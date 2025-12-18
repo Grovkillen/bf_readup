@@ -221,11 +221,3 @@ Until then:
 - no long-term support commitments are implied
 
 ---
-
-## Version
-
-**bf_readup v0.0.10**
-
-The codebase is active and continues to evolve, but always with internal usefulness as the primary driver.
-
----

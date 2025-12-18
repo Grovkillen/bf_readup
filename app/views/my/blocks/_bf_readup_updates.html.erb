@@ -2,19 +2,19 @@
 	<a href="#"
 		 class="icon-only icon-checked bf-mark-selected-read is-disabled"
 		 aria-disabled="true"
-		 title="Markera minst ett ärende för att använda funktionen"></a>
+		 title="<%= l(:'bf_readup.common.mark_selected_require_selection') %>"></a>
 
   <a href="#"
      class="icon-only icon-reload bf-readup-updates-sync"
-     title="Synka uppdateringar"></a>
+     title="<%= l(:'bf_readup.blocks.updates.sync_title') %>"></a>
 
   <a href="#"
      class="icon-only icon-settings bf-readup-updates-open-settings"
-     title="Inställningar"></a>
+     title="<%= l(:'bf_readup.blocks.updates.settings_title') %>"></a>
 </div>
 
 <h3 class="bf-readup-updates-header">
-  Uppdateringar sedan du senast läste
+	<%= l(:'bf_readup.blocks.updates.header') %>
   (<span id="bf-readup-updates-total-count">0</span>)
 </h3>
 
@@ -26,7 +26,7 @@
 <p id="bf-readup-updates-empty"
    class="nodata"
    style="display:none; margin:1em 0;">
-	Inga olästa ärenden att visa.
+	<%= l(:'bf_readup.blocks.updates.empty') %>
 </p>
 
 <!-- TABELL -->
@@ -43,7 +43,9 @@
   <!-- MAXIMERA / MINIMERA -->
 	<button id="bf-readup-updates-expand" class="bf-readup-updates-expand">
 		<span class="icon icon-zoom-in"></span>
-		<span class="label">Visa fler</span>
+		<span class="label">
+			<%= l(:'bf_readup.common.show_more') %>
+		</span>
 	</button>
 
   <!-- PAGINATION (Redmine-style, renderas av JS) -->
