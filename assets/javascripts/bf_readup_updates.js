@@ -783,7 +783,7 @@ window.BF = window.BF || {};
 		const diffSec = Math.floor((Date.now() - ts) / 1000);
 
 		const locales = BF.locales || {};
-		if (diffSec < 60) return locales.just_now || "just now";
+		if (diffSec < 60) return locales.common.just_now || "just now";
 
 		const min = Math.floor(diffSec / 60);
 		if (min < 60) return `${min} ${locales.units?.minute || "min"}`;
@@ -936,11 +936,11 @@ window.BF = window.BF || {};
 			expand.setAttribute("aria-expanded", expanded ? "true" : "false");
 
 			if (expanded) {
-				label.textContent = BF.locales?.show_less || "Show less";
+				label.textContent = BF.locales?.common.show_less || "Show less";
 				icon.classList.remove("icon-zoom-in");
 				icon.classList.add("icon-zoom-out");
 			} else {
-				label.textContent = BF.locales?.show_more || "Show more";
+				label.textContent = BF.locales?.common.show_more || "Show more";
 				icon.classList.remove("icon-zoom-out");
 				icon.classList.add("icon-zoom-in");
 			}
@@ -984,8 +984,8 @@ window.BF = window.BF || {};
 				<ul class="pages">
 					<li class="previous ${page === 1 ? "" : "page"}">
 						${page === 1
-							? `<span>${BF.locales?.previous_label || "« Previous"}</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page - 1}">${BF.locales?.previous_label || "« Previous"}</a>`}
+							? `<span>${BF.locales?.common.previous_label || "« Previous"}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page - 1}">${BF.locales?.common.previous_label || "« Previous"}</a>`}
 					</li>
 		`;
 
@@ -1000,8 +1000,8 @@ window.BF = window.BF || {};
 		html += `
 					<li class="next ${page === pages ? "" : "page"}">
 						${page === pages
-							? `<span>${BF.locales?.next_label || "Next »"}</span>`
-							: `<a href="#" class="bf-page-link" data-page="${page + 1}">${BF.locales?.next_label || "Next »"}</a>`}
+							? `<span>${BF.locales?.common.next_label || "Next »"}</span>`
+							: `<a href="#" class="bf-page-link" data-page="${page + 1}">${BF.locales?.common.next_label || "Next »"}</a>`}
 					</li>
 				</ul>
 				<span>
@@ -1057,7 +1057,7 @@ window.BF = window.BF || {};
 							 ${locked ? "disabled" : ""}>
 				<span class="bf-prio-icon">${p.icon}</span>
 				<span class="bf-prio-label">${p.label}</span>
- 			${locked ? `<span class="bf-prio-locked">${BF.locales?.locked || "locked"}</span>` : ""}
+ 			${locked ? `<span class="bf-prio-locked">${BF.locales?.common.locked || "locked"}</span>` : ""}
 			`;
 
 			host.appendChild(label);
@@ -1279,7 +1279,7 @@ window.BF = window.BF || {};
 				<td class="checkbox">
 				<input type="checkbox"
 							 value="${row.id}"
-							 ${disabled ? `disabled title='${BF.locales?.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
+							 ${disabled ? `disabled title='${BF.locales?.common.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
 
 				</td>
 			`;
