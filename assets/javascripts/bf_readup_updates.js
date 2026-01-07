@@ -431,7 +431,7 @@ window.BF = window.BF || {};
 			if (btn) {
 				btn.classList.add("is-disabled");
 				btn.setAttribute("aria-disabled", "true");
-				btn.title = BF.locales?.mark_selected_require_selection || "Select at least one issue to use this action";
+				btn.title = BF.locales?.common.mark_selected_require_selection || "Select at least one issue to use this action";
 			}
 			return;
 		}
@@ -449,8 +449,8 @@ window.BF = window.BF || {};
 		btn.classList.toggle("is-disabled", !enabled);
 		btn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		btn.title = enabled
-			? (BF.locales?.mark_selected_read || "Mark selected as read")
-			: (BF.locales?.mark_selected_require_selection || "Select at least one issue to use this action");
+			? (BF.locales?.common.mark_selected_read || "Mark selected as read")
+			: (BF.locales?.common.mark_selected_require_selection || "Select at least one issue to use this action");
 	};
 
 	BF.updateMasterCheckboxState = function () {
@@ -619,7 +619,7 @@ window.BF = window.BF || {};
 		
 		const btn = document.createElement("a");
 		btn.href = "javascript:void(0)";
-		btn.title = BF.locales?.mark_as_read || "Mark as read";
+		btn.title = BF.locales?.common.mark_as_read || "Mark as read";
 		btn.className = "bf-mark-read-btn";
 
 		Object.assign(btn.style, {
@@ -1057,7 +1057,7 @@ window.BF = window.BF || {};
 							 ${locked ? "disabled" : ""}>
 				<span class="bf-prio-icon">${p.icon}</span>
 				<span class="bf-prio-label">${p.label}</span>
- 			${locked ? `<span class="bf-prio-locked">${BF.locales?.common.locked || "locked"}</span>` : ""}
+ 			${locked ? `<span class="bf-prio-locked">${BF.locales?.common.locked || "(locked)"}</span>` : ""}
 			`;
 
 			host.appendChild(label);
@@ -1847,7 +1847,7 @@ ${JSON.stringify(row.debug, null, 2)}
 			<td class="checkbox">
 			<input type="checkbox"
 						 value="${row.id}"
-						 ${disabled ? `disabled title='${BF.locales?.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
+						 ${disabled ? `disabled title='${BF.locales?.common.cannot_mark_as_read || "Cannot be marked as read"}'` : ""}>
 			</td>
 		`;
 
