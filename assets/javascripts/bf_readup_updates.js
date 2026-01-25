@@ -27,7 +27,56 @@ window.BF = window.BF || {};
 (function () {
 
 	const BF_WIDGET_PREFIX = "bf-readup-updates";
-  
+ 	const BF_UPDATES_BLOCK_SELECTOR = "#block-bf_readup_updates";
+	const BF_LOADING_CLASS = "bf-widget-is-loading";
+	const BF_LOADING_OVERLAY_CLASS = "bf-readup-loading-orbit";
+
+	BF.ensureUpdatesLoadingOverlay = function () {
+		const target = document.querySelector(BF_UPDATES_BLOCK_SELECTOR);
+		if (!target) return;
+
+		// Säkerställ att overlay fungerar utan att påverka layout:
+		const cs = window.getComputedStyle(target);
+		if (cs.position === "static") {
+			if (!("bfReadupPrevPosition" in target.dataset)) {
+				target.dataset.bfReadupPrevPosition = target.style.position || "";
+			}
+			target.style.position = "relative";
+		}
+
+		// Skapa overlay om den inte finns
+		if (target.querySelector(`.${BF_LOADING_OVERLAY_CLASS}`)) return;
+
+		const overlay = document.createElement("div");
+		overlay.className = BF_LOADING_OVERLAY_CLASS;
+
+		for (let i = 0; i < 4; i++) {
+			const span = document.createElement("span");
+			span.className = "bf-orbit-span";
+			overlay.appendChild(span);
+		}
+
+		target.appendChild(overlay);
+	};
+
+	BF.setUpdatesLoading = function (isLoading) {
+		const target = document.querySelector(BF_UPDATES_BLOCK_SELECTOR);
+		if (!target) return;
+
+		if (isLoading) {
+			target.classList.add(BF_LOADING_CLASS);
+			BF.ensureUpdatesLoadingOverlay();
+		} else {
+			target.classList.remove(BF_LOADING_CLASS);
+			// Behåll overlay i DOM. CSS styr synligheten.
+			// Återställ position om vi ändrade den (valfritt).
+			if ("bfReadupPrevPosition" in target.dataset) {
+				target.style.position = target.dataset.bfReadupPrevPosition;
+				delete target.dataset.bfReadupPrevPosition;
+			}
+		}
+	};
+
 	// -------------------------------------------------------------------------
   // 0) GLOBAL STATE / GUARDS
   // -------------------------------------------------------------------------
@@ -38,6 +87,7 @@ window.BF = window.BF || {};
 	BF.__mypage.hasRendered = BF.__mypage.hasRendered || false;
 	BF.__mypage.pollerStarted = BF.__mypage.pollerStarted || false;
 	BF.__mypage.humanTimerStarted = BF.__mypage.humanTimerStarted || false;
+	BF.__mypage.nextForcedSyncAt = BF.__mypage.nextForcedSyncAt || null;
 
 	BF.VISUAL_TIMINGS = {
 		DIM: 400,
@@ -51,7 +101,7 @@ window.BF = window.BF || {};
 	BF.AUTO_REFRESH_SECONDS = 900; //production
 	//BF.AUTO_REFRESH_SECONDS = 60; //debut
 	// Hur ofta pollern vaknar och kontrollerar ålder
-	BF.POLL_INTERVAL_SECONDS = 60; //production
+	BF.POLL_INTERVAL_SECONDS = 30; //production
 	//BF.POLL_INTERVAL_SECONDS = 10; //debug
 	
 	// Klasser vi synkar deterministiskt från serverstate
@@ -323,7 +373,13 @@ window.BF = window.BF || {};
 
       BF.loadData();
     });
-	
+		
+		document.addEventListener("mouseenter", function (e) {
+			const syncBtn = e.target.closest(`.${BF_WIDGET_PREFIX}-sync`);
+			if (!syncBtn) return;
+			BF.updateSyncButtonTooltip();
+		}, true);
+
 		// --------------------------------------------------------------
 		// Bulk: markera valda som lästa
 		// --------------------------------------------------------------
@@ -526,6 +582,16 @@ window.BF = window.BF || {};
 		BF.el.headerCount.textContent = String(count);
 	};
 
+// -------------------------------------------------------------------------
+// NAME RENDERING: no-break full name (prevent first/last name wrapping)
+// -------------------------------------------------------------------------
+	BF.nbspName = BF.nbspName || function (name) {
+		return String(name ?? "")
+			.trim()
+			.replace(/\s+/g, " ")
+			.replace(/ /g, "\u00A0"); // NBSP
+	};
+	
 // IMPORTANT:
 // renderCell() är ENDA källan för cell-DOM.
 // Alla renderingar (initial, fast, insert) måste gå via denna.
@@ -570,6 +636,15 @@ window.BF = window.BF || {};
 			`;
 		}
 
+		if (key === "updated_by") {
+			const display = BF.nbspName(val);
+			return `
+				<td class="updated_by" data-bf-owned="true">
+					${display}
+				</td>
+			`;
+		}
+
 		if (key === "new_count") {
 			const authors = row.new_authors || [];
 			return `
@@ -601,10 +676,18 @@ window.BF = window.BF || {};
 				</td>
 			`;
 		}
-
-		return `<td class="${key}">${val}</td>`;
+		
+		return `<td class="${key}" data-bf-owned="true">${val}</td>`;
 	};
 
+	BF.armNextSyncIn = function (seconds) {
+		const s = parseInt(seconds, 10);
+		const delay = (!s || isNaN(s) || s < 1) ? 60 : s;
+
+		// "Varje klickning sätter now+1min" => vi skriver alltid över med nytt now+delay
+		BF.__mypage.nextForcedSyncAt = Date.now() + (delay * 1000);
+	};
+	
 	BF.ensureMarkAsReadButton = function (tr, row) {
 		if (row.allowed_to_mark_as_read === false) return;
 		if (!tr || tr.__bfHasMarkReadBtn) return;
@@ -676,6 +759,7 @@ window.BF = window.BF || {};
 			post(`${BF_APP_ROOT}bf_readup/mark_as_read`, { issue_id: row.id })
 				.then(() => {
 					BF.removeIssueRowById(row.id);
+					BF.armNextSyncIn(60);
 				});
 
 		});
@@ -713,6 +797,7 @@ window.BF = window.BF || {};
 
 				BF.updateMasterCheckboxState();
 				BF.updateBulkReadButtonState();
+				BF.armNextSyncIn(60);
 			});
 
 	};
@@ -720,6 +805,67 @@ window.BF = window.BF || {};
   BF.isDebugEnabled = function () {
     return localStorage.getItem("bf_readup_debug") === "1";
   };
+
+	BF.tmpl = function (str, vars) {
+		if (!str) return "";
+		return String(str).replace(/%\{(\w+)\}/g, (_, k) => {
+			return (vars && vars[k] != null) ? String(vars[k]) : "";
+		});
+	};
+
+	BF.formatSyncedAgo = function () {
+		const c = BF.locales?.common || {};
+
+		const raw = localStorage.getItem("bf_readup_last_load");
+		if (!raw) return c.last_synced_never || "Last synced: never";
+
+		const last = parseInt(raw, 10);
+		if (isNaN(last)) return c.last_synced_unknown || "Last synced: unknown";
+
+		const diffSec = Math.floor((Date.now() - last) / 1000);
+
+		if (diffSec < 10) return c.last_synced_just_now || "Last synced: just now";
+		if (diffSec < 60) {
+			return BF.tmpl(c.last_synced_seconds || "Last synced: %{n} sec ago", { n: diffSec });
+		}
+
+		const min = Math.floor(diffSec / 60);
+		if (min < 60) {
+			return BF.tmpl(c.last_synced_minutes || "Last synced: %{n} min ago", { n: min });
+		}
+
+		const h = Math.floor(min / 60);
+		if (h < 24) {
+			return BF.tmpl(c.last_synced_hours || "Last synced: %{n} h ago", { n: h });
+		}
+
+		const d = Math.floor(h / 24);
+		return BF.tmpl(c.last_synced_days || "Last synced: %{n} d ago", { n: d });
+	};
+
+	BF.updateSyncButtonTooltip = function () {
+		const syncBtn = document.querySelector(`.${BF_WIDGET_PREFIX}-sync`);
+		if (!syncBtn) return;
+
+		const title1 = BF.locales?.common?.sync_title || "Refresh";
+		const title2 = BF.formatSyncedAgo();
+
+		syncBtn.setAttribute("title", `${title1}\n${title2}`);
+	};
+
+	BF.startSyncTooltipTimer = function () {
+		if (BF.__mypage.syncTooltipTimerStarted) return;
+		BF.__mypage.syncTooltipTimerStarted = true;
+
+		// Sätt direkt (så den finns innan första hover)
+		BF.updateSyncButtonTooltip();
+
+		// Uppdatera löpande så "X min" inte blir gammalt
+		setInterval(() => {
+			if (document.visibilityState !== "visible") return;
+			BF.updateSyncButtonTooltip();
+		}, 30 * 1000);
+	};
 
 	BF.shouldAutoRefresh = function () {
 		const raw = localStorage.getItem("bf_readup_last_load");
@@ -737,13 +883,17 @@ window.BF = window.BF || {};
 		BF.__mypage.pollerStarted = true;
 
 		setInterval(() => {
-			// Hämta inte om sidan är dold
 			if (document.visibilityState !== "visible") return;
-
-			// Hämta inte om redan laddar
 			if (BF.__mypage.loading) return;
 
-			// Hämta endast om datan är för gammal
+			// 1) Forced sync har företräde
+			if (BF.__mypage.nextForcedSyncAt && Date.now() >= BF.__mypage.nextForcedSyncAt) {
+				BF.__mypage.nextForcedSyncAt = null;
+				BF.loadData();
+				return;
+			}
+
+			// 2) Ordinarie åldersbaserad auto-refresh
 			if (BF.shouldAutoRefresh()) {
 				BF.loadData();
 			}
@@ -1100,7 +1250,7 @@ window.BF = window.BF || {};
 	BF.loadData = function () {
 		if (BF.__mypage.loading) return;
 		BF.__mypage.loading = true;
-
+		BF.setUpdatesLoading(true);
 		const debug = BF.isDebugEnabled();
 		
 		const syncBtn = document.querySelector(`.${BF_WIDGET_PREFIX}-sync`);
@@ -1115,6 +1265,7 @@ window.BF = window.BF || {};
 				}
 
 				localStorage.setItem("bf_readup_last_load", Date.now().toString());
+				BF.updateSyncButtonTooltip();
 				BF.saveCachedData(json);
 
 				BF.columns = json.columns || [];
@@ -1198,8 +1349,11 @@ window.BF = window.BF || {};
 			})
 			.finally(() => {
 				BF.__mypage.loading = false;
+				
 				const syncBtn = document.querySelector(`.${BF_WIDGET_PREFIX}-sync`);
 				if (syncBtn) syncBtn.classList.remove("is-loading");
+				
+				BF.setUpdatesLoading(false);
 			});
 	};
 
@@ -1781,6 +1935,24 @@ ${JSON.stringify(row.debug, null, 2)}
 
 				return;
 			}
+			
+			// ------------------------------
+			// UPDATED_BY: patcha textContent med NBSP (förhindra radbrytning)
+			// ------------------------------
+			if (key === "updated_by") {
+				const newVal = BF.nbspName(row.updated_by ?? "");
+
+				if (td.textContent !== newVal) {
+					td.textContent = newVal;
+
+					td.classList.add("bf-cell-updated");
+					setTimeout(() => td.classList.remove("bf-cell-updated"), 1200);
+
+					rowChanged = true;
+				}
+
+				return;
+			}
 
 			// ------------------------------
 			// Övriga celler: patcha ENDAST BF-ägda celler
@@ -1866,6 +2038,7 @@ ${JSON.stringify(row.debug, null, 2)}
 
 		// Starta bakgrundspolling
 		BF.startPolling();
+		BF.startSyncTooltipTimer();
 
 		if (!BF.__mypage.humanTimerStarted) {
 			BF.__mypage.humanTimerStarted = true;

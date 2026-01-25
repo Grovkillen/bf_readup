@@ -48,11 +48,20 @@ module BfReadup
         filtered_journals =
           new_journals.reject { |j| j.user_id == user.id }
 
+				last_journal = all_journals.last
+
 				last_activity_at =
-					if all_journals.any?
-						all_journals.last.created_on
+					if last_journal
+						last_journal.created_on
 					else
 						issue.updated_on
+					end
+
+				last_activity_by =
+					if last_journal
+						last_journal.user
+					else
+						issue.author
 					end
 
 				if effective_last_read_at &&
@@ -218,6 +227,8 @@ module BfReadup
 					new_authors: new_authors,
 					journal_authors: filtered_journals.map { |j| journal_meta(j) },
 					last_activity_at: last_activity_at,
+					last_activity_by_id: last_activity_by&.id,
+					last_activity_by_name: last_activity_by&.name,
 					last_read_at: effective_last_read_at,
 					debug: debug_info
 				}

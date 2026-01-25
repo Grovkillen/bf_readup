@@ -37,7 +37,8 @@ class BfReadupController < ApplicationController
     { "key" => "status",     "label" => "Status" },
     { "key" => "subject",    "label" => "Ämne" },
     { "key" => "updated_on", "label" => "Senast ändrad" },
-    { "key" => "read_ago", "label"   => "Sedan jag läste" },
+		{ "key" => "updated_by", "label" => "Senast ändrad av" },
+    { "key" => "read_ago",   "label" => "Sedan jag läste" },
     { "key" => "activity_ago", "label" => "Senaste aktivitet" },
     { "key" => "new_count",  "label" => "Nytt" }
   ].freeze
@@ -143,6 +144,9 @@ class BfReadupController < ApplicationController
 				updated_on: format_time(issue.updated_on),
 				updated_on_iso: issue.updated_on&.iso8601,
 
+				updated_by: u[:last_activity_by_name],
+				updated_by_id: u[:last_activity_by_id],
+				
 				last_read_at_text: read_at ? format_time(read_at) : nil,
 				last_read_at_iso: read_at&.iso8601,
 
