@@ -377,7 +377,31 @@ window.BF = window.BF || {};
 		document.addEventListener("mouseenter", function (e) {
 			const syncBtn = e.target.closest(`.${BF_WIDGET_PREFIX}-sync`);
 			if (!syncBtn) return;
+
+			syncBtn.dataset.bfTooltipHovering = "1";
+
 			BF.updateSyncButtonTooltip();
+
+			const redmineTip = syncBtn.dataset.bfTooltipRedmine || (BF.locales?.common?.sync_title || "Refresh");
+			syncBtn.setAttribute("title", redmineTip);
+
+			clearTimeout(syncBtn.__bfNativeTipTimer);
+			syncBtn.__bfNativeTipTimer = setTimeout(() => {
+				const nativeTip = syncBtn.dataset.bfTooltipNative || BF.formatSyncedAgo();
+				syncBtn.setAttribute("title", nativeTip);
+			}, 50);
+		}, true);
+
+		document.addEventListener("mouseleave", function (e) {
+			const syncBtn = e.target.closest(`.${BF_WIDGET_PREFIX}-sync`);
+			if (!syncBtn) return;
+
+			clearTimeout(syncBtn.__bfNativeTipTimer);
+
+			delete syncBtn.dataset.bfTooltipHovering;
+
+			const redmineTip = syncBtn.dataset.bfTooltipRedmine || (BF.locales?.common?.sync_title || "Refresh");
+			syncBtn.setAttribute("title", redmineTip);
 		}, true);
 
 		// --------------------------------------------------------------
@@ -847,10 +871,22 @@ window.BF = window.BF || {};
 		const syncBtn = document.querySelector(`.${BF_WIDGET_PREFIX}-sync`);
 		if (!syncBtn) return;
 
-		const title1 = BF.locales?.common?.sync_title || "Refresh";
-		const title2 = BF.formatSyncedAgo();
+		const redmineTip = BF.locales?.common?.sync_title || "Refresh";
+		const nativeTip  = BF.formatSyncedAgo();
 
-		syncBtn.setAttribute("title", `${title1}\n${title2}`);
+		syncBtn.dataset.bfTooltipRedmine = redmineTip;
+		syncBtn.dataset.bfTooltipNative  = nativeTip;
+
+		// Om användaren just nu hovrar: skriv INTE över title,
+		// annars kan vi slå sönder native-tooltipen.
+		if (syncBtn.dataset.bfTooltipHovering === "1") {
+			syncBtn.setAttribute("data-tooltip", redmineTip);
+			return;
+		}
+
+		// Basläge
+		syncBtn.setAttribute("title", redmineTip);
+		syncBtn.setAttribute("data-tooltip", redmineTip);
 	};
 
 	BF.startSyncTooltipTimer = function () {
