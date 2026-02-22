@@ -38,6 +38,8 @@ en:
       new_count: "New"
       type: "Type"
       time_spent: "Time"
+      readers_count: "Readers"
+      time_spent_total: "Total time"
     admin:
       title: "BF Readup – Settings"
       general: "General"
@@ -78,6 +80,8 @@ en:
         header: "Recently visited issues"
       most:
         header: "My most read issues right now"
+      most_global:
+        header: "Most read in projects I'm part of)"
 
     updates_settings:
       legend_priorities: "Show priorities"

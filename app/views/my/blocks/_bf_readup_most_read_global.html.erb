@@ -1,0 +1,45 @@
+<!-- app/views/bf_readup/_bf_readup_most_read_global_mypage.html.erb -->
+
+<div class="contextual">
+  <a href="#"
+     class="icon-only icon-reload bf-readup-most-global-sync"
+     title="<%= l(:'bf_readup.common.sync_title') %>"></a>
+</div>
+
+<div class="bf-readup-most bf-readup-most-global">
+
+  <h3 class="bf-readup-most-header">
+    <%= l(:'bf_readup.blocks.most_global.header') %> (<span id="bf-readup-most-global-total-count">0</span>)
+  </h3>
+
+  <p id="bf-readup-most-global-empty"
+     class="nodata"
+     style="display:none; margin:1em 0;">
+    <%= l(:'bf_readup.common.empty') %>
+  </p>
+
+  <table id="bf-readup-most-global-table" class="list issues">
+    <thead id="bf-readup-most-global-thead">
+      <!-- byggs av JS -->
+    </thead>
+
+    <tbody id="bf-readup-most-global-tbody">
+      <!-- rader injiceras via JS -->
+    </tbody>
+  </table>
+
+  <!-- FOOTER -->
+  <div class="bf-readup-most-global-footer">
+    <div class="bf-readup-most-global-footer-inner">
+      <button id="bf-readup-most-global-expand" class="bf-readup-most-expand">
+        <span class="icon icon-zoom-in"></span>
+        <span class="label"><%= l(:'bf_readup.common.show_more') %></span>
+      </button>
+      <div id="bf-readup-most-global-pagination"></div>
+    </div>
+  </div>
+
+</div>
+
+<%= stylesheet_link_tag  'bf_readup_most', plugin: 'bf_readup' %>
+<%= javascript_include_tag 'bf_readup_most_read_global', plugin: 'bf_readup' %>

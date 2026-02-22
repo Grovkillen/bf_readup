@@ -1,6 +1,6 @@
 # app/controllers/bf_readup_controller.rb
 class BfReadupController < ApplicationController
-  accept_api_auth :updates
+  accept_api_auth :updates, :recently_read, :most_read, :most_read_global
 
   before_action :require_login
 	skip_before_action :verify_authenticity_token, only: [:updates, :mark_as_read, :mark_all_as_read]
@@ -13,6 +13,7 @@ class BfReadupController < ApplicationController
 			:mark_all_as_read,
 			:recently_read,
 			:most_read,
+			:most_read_global,
 			:preferences
 		]
 
@@ -23,6 +24,7 @@ class BfReadupController < ApplicationController
 			:mark_all_as_read,
 			:recently_read,
 			:most_read,
+			:most_read_global,
 			:preferences
 		]
 
@@ -294,6 +296,44 @@ class BfReadupController < ApplicationController
 		render json: {
 			status: "ok",
 			rows: rows
+		}
+	end
+
+	def most_read_global
+		user = User.current
+		rows = BfReadup::QueryEngine.most_read_global(user)
+
+		render json: {
+			status: "ok",
+			rows: rows.map { |r|
+				issue = r[:issue]
+				project = issue.project
+
+				{
+					issue_id: issue.id,
+					subject: issue.subject,
+
+					# ---- project (utökat för tooltip + bättre länkar)
+					project_id: project&.id,
+					project_name: project&.name.to_s,
+					project_identifier: project&.identifier,
+
+					project_parents: project ? project.ancestors.map { |p|
+						{ id: p.id, name: p.name }
+					} : [],
+
+					# ---- meta
+					tracker_id: issue.tracker_id,
+					status_id: issue.status_id,
+					priority_id: issue.priority_id,
+					is_closed: issue.closed?,
+
+					total_seconds: r[:total_seconds].to_i,
+					readers_count: r[:readers_count].to_i,
+					readers: r[:readers] || [],
+					last_viewed_at: r[:last_viewed_at]&.utc&.iso8601
+				}
+			}
 		}
 	end
 

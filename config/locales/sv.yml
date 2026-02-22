@@ -38,6 +38,8 @@ sv:
       new_count: "Nytt"
       type: "Typ"
       time_spent: "Tid"
+      readers_count: "Läsare"
+      time_spent_total: "Total tid"
     admin:
       title: "BF Readup – Inställningar"
       general: "Allmänt"
@@ -78,6 +80,8 @@ sv:
         header: "Senast besökta ärenden"
       most:
         header: "Mina mest lästa ärenden just nu"
+      most_global:
+        header: "Mest lästa i projekt jag är med i"
 
     updates_settings:
       legend_priorities: "Visa prioriteringar"

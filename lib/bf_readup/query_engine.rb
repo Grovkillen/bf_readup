@@ -604,6 +604,101 @@ module BfReadup
 				.sort_by { |r| -r[:total_seconds] }
 				.first(MAX_RESULTS)
 		end
+		
+		def self.most_read_global(current_user)
+			lookback_days = Setting.plugin_bf_readup["lookback_days"].to_i
+			since = lookback_days.days.ago
+
+			project_ids = current_user.projects.where(status: 1).pluck(:id)
+			return [] if project_ids.empty?
+
+			# ------------------------------------------------------------
+			# 1) Aggregat per issue (utan includes, annars får vi GROUP BY-strul)
+			# ------------------------------------------------------------
+			agg_rows =
+				BfReadupVisit
+					.joins(issue: :project)
+					.where(projects: { status: 1 })
+					.where("bf_readup_visits.total_seconds > 0")
+					.where("bf_readup_visits.last_viewed_at >= ?", since)
+					.where(issues: { project_id: project_ids })
+					.group("bf_readup_visits.issue_id")
+					.pluck(
+						Arel.sql("bf_readup_visits.issue_id"),
+						Arel.sql("SUM(bf_readup_visits.total_seconds)"),
+						Arel.sql("MAX(bf_readup_visits.last_viewed_at)"),
+						Arel.sql("COUNT(DISTINCT bf_readup_visits.user_id)")
+					)
+
+			issue_ids = agg_rows.map { |r| r[0] }.compact.uniq
+			return [] if issue_ids.empty?
+
+			issues_by_id =
+				Issue
+					.includes(:project)
+					.where(id: issue_ids)
+					.index_by(&:id)
+
+			# ------------------------------------------------------------
+			# 2) Per issue + per user (för tooltip-data)
+			# ------------------------------------------------------------
+			reader_rows =
+				BfReadupVisit
+					.where(issue_id: issue_ids)
+					.where("bf_readup_visits.total_seconds > 0")
+					.where("bf_readup_visits.last_viewed_at >= ?", since)
+					.group(:issue_id, :user_id)
+					.pluck(
+						:issue_id,
+						:user_id,
+						Arel.sql("SUM(bf_readup_visits.total_seconds)"),
+						Arel.sql("MAX(bf_readup_visits.last_viewed_at)")
+					)
+
+			user_ids = reader_rows.map { |r| r[1] }.compact.uniq
+			users_by_id = User.where(id: user_ids).index_by(&:id)
+
+			readers_by_issue = Hash.new { |h, k| h[k] = [] }
+
+			reader_rows.each do |issue_id, user_id, total_sum, last_viewed_at|
+				u = users_by_id[user_id]
+				next unless u
+
+				readers_by_issue[issue_id] << {
+					user_id: u.id,
+					user_name: u.name.to_s,
+					total_seconds: total_sum.to_i,
+					last_viewed_at: last_viewed_at&.utc&.iso8601
+				}
+			end
+
+			# Sortera läsare på tid (störst först), och stabilt på namn vid lika
+			readers_by_issue.each_value do |arr|
+				arr.sort_by! { |x| [-x[:total_seconds].to_i, x[:user_name].downcase] }
+			end
+
+			# ------------------------------------------------------------
+			# 3) Bygg rows till frontend
+			# ------------------------------------------------------------
+			rows =
+				agg_rows.map do |issue_id, total_sum, last_viewed_at, readers_count|
+					issue = issues_by_id[issue_id]
+					next unless issue
+					next unless issue.project&.status == 1
+
+					{
+						issue: issue,
+						total_seconds: total_sum.to_i,
+						last_viewed_at: last_viewed_at,
+						readers_count: readers_count.to_i,
+						readers: readers_by_issue[issue_id] || []
+					}
+				end.compact
+
+			rows
+				.sort_by { |r| -r[:total_seconds] }
+				.first(MAX_RESULTS)
+		end
 
   end
 end

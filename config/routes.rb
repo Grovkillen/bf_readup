@@ -11,4 +11,5 @@ Rails.application.routes.draw do
 
 	get  'bf_readup/recently_read',     to: 'bf_readup#recently_read'
   get  'bf_readup/most_read',         to: 'bf_readup#most_read'
+	get 'bf_readup/most_read_global',		to: 'bf_readup#most_read_global'
 end
