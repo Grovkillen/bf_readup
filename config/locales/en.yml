@@ -77,7 +77,7 @@ en:
       recent:
         header: "Recently visited issues"
       most:
-        header: "Most read issues right now"
+        header: "My most read issues right now"
 
     updates_settings:
       legend_priorities: "Show priorities"

@@ -1222,7 +1222,14 @@ window.BF = window.BF || {};
 		const host = document.getElementById("bf-readup-prio-list");
 		if (!host) return;
 
-		const prios = BF.runtime.settings?.prio_levels || [];
+		const prios =
+		(BF.runtime.settings?.prio_levels || [])
+			.slice() // kopia, så vi inte muterar originalet
+			.sort((a, b) => {
+				const ra = parseInt(a.rank, 10) || 0;
+				const rb = parseInt(b.rank, 10) || 0;
+				return ra - rb; // lägre rank först
+			});
 		const prefs = BF.runtime.preferences || {};
 		const visible = new Set(prefs.visible_prios || []);
 

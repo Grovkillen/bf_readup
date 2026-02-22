@@ -77,7 +77,7 @@ sv:
       recent:
         header: "Senast besökta ärenden"
       most:
-        header: "Mest lästa ärenden just nu"
+        header: "Mina mest lästa ärenden just nu"
 
     updates_settings:
       legend_priorities: "Visa prioriteringar"

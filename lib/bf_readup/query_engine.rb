@@ -38,9 +38,12 @@ module BfReadup
 
 				visit = BfReadupVisit.find_by(user_id: user.id, issue_id: issue.id)
 
-				read_state = effective_read_state(visit)
-				break_journal_id       = read_state[:journal_id]
-				effective_last_read_at = read_state[:read_at]
+				pos = read_positions(visit)
+
+				break_journal_id       = pos[:effective_journal_id]
+				effective_last_read_at = pos[:effective_at]
+
+				never_read = pos[:actual_at].nil? && pos[:marked_at].nil?
 
 				new_journals =
 					all_journals.where("journals.id > ?", break_journal_id)
@@ -76,7 +79,6 @@ module BfReadup
         #######################################################################
         is_author           = issue.author_id == user.id
         has_journals        = all_journals.any?
-        never_read          = effective_last_read_at.nil?
         has_new             = new_journals.any?
         has_new_from_others = filtered_journals.any?
         only_self_changes   = has_new && !has_new_from_others
@@ -190,7 +192,7 @@ module BfReadup
 						normal_mode_reason: reason_normal,
 						normal_mode_included: include_in_normal,
 
-						effective_read_state: read_state,
+						read_positions: pos,
 						break_journal_id: break_journal_id,
 
 						all_journal_ids: all_journals.map(&:id),
@@ -340,6 +342,58 @@ module BfReadup
 		end
 
 		###########################################################################
+		# READ POSITION (HJÄLPFUNKTION)
+		###########################################################################
+		def self.read_positions(visit)
+			return {
+				actual_at: nil,
+				actual_journal_id: 0,
+				marked_at: nil,
+				marked_journal_id: nil,
+				effective_at: nil,
+				effective_journal_id: 0,
+				effective_source: :none
+			} unless visit
+
+			actual_at = visit.last_viewed_at
+			actual_journal_id = (visit.last_journal_id || 0)
+
+			extra = visit.extra_data.is_a?(Hash) ? visit.extra_data : {}
+
+			marked_at =
+				begin
+					extra["marked_as_read_at"].present? ? Time.parse(extra["marked_as_read_at"].to_s) : nil
+				rescue
+					nil
+				end
+
+			marked_journal_id =
+				extra["marked_as_read_journal_id"].present? ? extra["marked_as_read_journal_id"].to_i : nil
+
+			if marked_at && marked_journal_id && (actual_at.nil? || marked_at >= actual_at)
+				{
+					actual_at: actual_at,
+					actual_journal_id: actual_journal_id,
+					marked_at: marked_at,
+					marked_journal_id: marked_journal_id,
+					effective_at: marked_at,
+					effective_journal_id: marked_journal_id,
+					effective_source: :marked
+				}
+			else
+				{
+					actual_at: actual_at,
+					actual_journal_id: actual_journal_id,
+					marked_at: marked_at,
+					marked_journal_id: marked_journal_id,
+					effective_at: actual_at,
+					effective_journal_id: actual_journal_id,
+					effective_source: actual_at ? :actual : :none
+				}
+			end
+		end
+
+		###########################################################################
 		# EFFECTIVE READ POSITION (ENDA SANNINGEN)
 		###########################################################################
 		def self.effective_read_state(visit)
@@ -368,7 +422,7 @@ module BfReadup
 					nil
 
 			if marked_at && marked_journal_id &&
-					 (last_viewed_at.nil? || marked_at > last_viewed_at)
+					 (last_viewed_at.nil? || marked_at >= last_viewed_at)
 				{
 					journal_id: marked_journal_id,
 					read_at: marked_at
@@ -386,8 +440,8 @@ module BfReadup
     # PRIORITETSMETODER
     ###########################################################################
 		def self.mentioned_unread?(issue, user, visit)
-			state = effective_read_state(visit)
-			last_id = state[:journal_id]
+			pos = read_positions(visit)
+			last_id = pos[:effective_journal_id]
 
 			issue.journals
 					 .visible(user)
@@ -433,27 +487,61 @@ module BfReadup
 
 		def self.read_with_new_changes?(issue, user, visit)
 			return false unless visit
-
-			state = effective_read_state(visit)
-			last_read_at = state[:read_at]
-
-			return false unless last_read_at
+			pos = read_positions(visit)
+			return false unless pos[:actual_at]
 
 			last_activity =
-				issue.journals.any? ?
-					issue.journals.maximum(:created_on) :
-					issue.updated_on
+				issue.journals.any? ? issue.journals.maximum(:created_on) : issue.updated_on
 
-			last_activity > last_read_at
+			last_activity > pos[:actual_at]
 		end
 
 		def self.new_issue_never_read?(issue, user, visit)
 			return true unless visit
-
-			state = effective_read_state(visit)
-			state[:read_at].nil?
+			pos = read_positions(visit)
+			pos[:actual_at].nil? && pos[:marked_at].nil?
 		end
-		
+	
+		def self.marked_read_after_actual_read_with_new_changes?(issue, user, visit)
+			return false unless visit
+			pos = read_positions(visit)
+			return false unless pos[:marked_at] && pos[:marked_journal_id]
+			return false unless pos[:actual_at] # någon gång faktiskt läst
+			return false unless pos[:marked_at] >= pos[:actual_at] # markeringen är efter faktisk läsning
+
+			last_activity =
+				issue.journals.any? ? issue.journals.maximum(:created_on) : issue.updated_on
+
+			last_activity > pos[:marked_at]
+		end
+
+		def self.marked_read_but_never_read_with_new_changes?(issue, user, visit)
+			return false unless visit
+			pos = read_positions(visit)
+			return false unless pos[:marked_at] && pos[:marked_journal_id]
+			return false unless pos[:actual_at].nil? # aldrig faktiskt läst
+
+			last_activity =
+				issue.journals.any? ? issue.journals.maximum(:created_on) : issue.updated_on
+
+			last_activity > pos[:marked_at]
+		end
+
+		def self.marked_read_after_actual_read?(issue, user, visit)
+			return false unless visit
+			pos = read_positions(visit)
+			return false unless pos[:marked_at] && pos[:marked_journal_id]
+			return false unless pos[:actual_at]
+			pos[:marked_at] >= pos[:actual_at]
+		end
+
+		def self.marked_read_but_never_read?(issue, user, visit)
+			return false unless visit
+			pos = read_positions(visit)
+			return false unless pos[:marked_at] && pos[:marked_journal_id]
+			pos[:actual_at].nil?
+		end
+
 		###########################################################################
 		# MOST READ AND RECENTLY READ JOURNALS
 		###########################################################################

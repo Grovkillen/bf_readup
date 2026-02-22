@@ -25,7 +25,7 @@ Redmine::Plugin.register :bf_readup do
   name        "BF Readup"
   author      "Jimmy Westberg (Bracke Forest AB)"
   description "Tracking of read and unread changes in issues"
-  version     "0.0.27"
+  version     "0.1.0"
 
   settings(
     default: {
